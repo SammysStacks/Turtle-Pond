@@ -1,0 +1,643 @@
+@charset "UTF-8";
+/*!
+* Start Bootstrap - Freelancer v6.0.3 (https://startbootstrap.com/themes/freelancer)
+* Copyright 2013-2020 Start Bootstrap
+* Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-freelancer/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap v4.5.0 (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+/* Whole Page
+------------------------------------------------------------*/
+body {
+  margin: 0;
+  break-after: avoid-page;
+  font-family: "Lato";
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: left;
+  background-color: #fff;
+	min-width: 992px !important;
+}
+
+.container {
+  width: 100%;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.nav_Container {
+  padding-right: 0rem;
+  padding-left: 0rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5rem;
+  font-family: "Montserrat";
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
+  display: block;
+}
+
+img {page-break-inside: avoid;}
+
+.from_Top {
+  padding-top: 130px;
+}
+
+.center {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn:not(.nav-link):not(.event_Button_Text) {
+	border-width: 2px;
+	line-height: 2rem;
+}
+
+.bold {font-weight: bold;}
+
+.remove_Margin {margin: 0}
+
+
+/* NAVIGATION BAR STYLES
+------------------------------------------------------------*/
+#navBar {
+	font-family: 'Montserrat';
+	font-weight: 700;
+	padding-top: 1.5rem;
+	padding-bottom: 1.5rem;
+	padding-top: 0.3s;
+	padding-bottom: 0.3s;
+	letter-spacing: 0.0625rem;
+}
+
+#navBar .navbar-brand {
+	font-size: 2em
+}
+
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+.nav-link {
+  font-family: 'Montserrat';
+  font-weight: 700;
+  letter-spacing: 0.0625rem;
+  text-transform: uppercase !important;
+}
+
+
+/* Nav Bar Shrink When User Scrolls Down */
+nav.navbar.navbar-shrink {
+  min-height: 35px;
+}
+
+nav.navbar-shrink a {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  font-size: 15px;
+}
+
+nav.navbar-shrink .navbar-brand {
+  font-size: 25px;
+}
+
+nav.navbar-shrink .navbar-toggle {
+  padding: 4px 5px;
+  margin: 8px 15px 8px 0;
+}
+
+#navBar.navbar-shrink {
+	padding-top: 0.6rem;
+	padding-bottom: 0.6rem;
+}
+#navBar.navbar-shrink .navbar-brand {
+	font-size: 1.5em;
+}
+/* End Nav Shrink */
+
+/* Calendar (Left Side)
+------------------------------------------------------------*/
+/* Header Text */
+.pull_Left {
+  float: left;
+}
+
+.pull_Right {
+  float: right;
+}
+
+.calendar_Header_Text {
+  color: #212529;
+  font-family: "Montserrat";
+  font-weight: 700;
+  line-height: 1.2;
+  font-size: 1.75em;
+}
+
+.report_Button {
+  background-color: #212529;
+}
+
+.report_Button_Text {
+  color: white;
+  font-family: "Montserrat";
+  font-weight: 600;
+  font-size: 1em;
+  padding: 2px 25px;
+  margin-top: 0;
+  top: 0;
+}
+
+.title_box {
+  color: purple;
+  border: 3px solid black;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  background-color: lightgrey;
+  font-size: 30;
+}
+
+.comment_box_text {
+  font-size: 17px;
+	font-family: sans-serif;
+}
+
+.fancy_input {
+  border: 3px solid black;
+  border-radius: 25px;
+  padding: 1em 1em 1em 1em;
+	top: 0;
+  bottom: 0;
+}
+
+.report_Button:hover {background-color: #05176b; color: white;}
+
+.bio_text {
+  max-width: 550px;
+  word-wrap: break-word;
+  font-size: 20px;
+}
+
+.logo {
+  height:50px;
+}
+
+/* Calendar */
+.on_Left {
+    float: left;
+    text-align: center;
+    width: 53%;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 4rem;
+}
+table.calendar { table-layout:fixed;}
+table.calendar td { overflow: hidden; }
+
+table.calendar thead tr th:not(:first-child) {
+  table-layout : fixed;
+  width: 100px;
+  position:relative;
+}
+
+table.calendar thead tr th {
+  border-top: 1px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  background-color: white;
+  padding: 10px 10px;
+}
+
+.time_Col {
+  width: 6%;
+  background-color: white;
+}
+
+table.calendar thead tr th.days {
+  font-weight: bold;
+  color: #212529;
+  font-family: "Montserrat";
+  font-weight: 700;
+  line-height: 1.2;
+  font-size: 1em;
+}
+
+.time_Block {
+  width: 100%;
+  height: 3rem;
+  padding: 0px;
+  border-bottom: 1px solid lightgrey;
+  text-align: center;
+  position: relative;
+  line-height: 3rem;
+}
+
+
+table.calendar tbody tr td {
+  border-right: 1px solid black;
+  height: 42rem;
+  max-height: 42rem;
+  min-height: 42rem;
+  white-space: nowrap;
+  padding: 0px;
+  margin: 0px;
+}
+
+table:last-child.calendar {
+  border-bottom: 1px solid black;
+}
+
+table.calendar tr .time_Col {
+  border-left: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+}
+
+table.calendar tbody tr td:not(.time_Col) {
+  border-top: 1px solid black;
+  background-image: repeating-linear-gradient(white, white 1.5rem, #f2f2f2 1.5rem, #f2f2f2 3rem);
+}
+
+table.calendar tr:nth-child(2n) {background-color: #f2f2f2;}
+table.calendar tr:nth-child(2n) {
+  border-bottom: 1px solid black;
+  background-color: #f2f2f2;
+}
+
+.text_Event_Time {font-size: 0.75em !important;}
+
+.day_Block {
+  position: relative;
+}
+
+.flexbox_Edits {
+  top: 0;
+  position: relative;
+  width: 100%;
+  height: 42rem;
+  flex-wrap: wrap;
+}
+
+.event_Button {
+  border-width: 2px;
+  border-radius: 8px;
+  border-style: inset solid solid;
+  align-items: flex-start;
+  align-self: stretch;
+  position: relative;
+  position: absolute;
+  float: left;
+  left: 0;
+  overflow: hidden;
+  -webkit-box-sizing: border-box;
+  /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;
+  /* Firefox, other Gecko */
+  box-sizing: border-box;
+  /* Opera/IE 8+ */
+  flex: 1 0 auto;
+}
+
+.event_Button_Text {
+  word-wrap: break-word;
+  text-align: left;
+  float: left;
+  vertical-align: top;
+  font-family: 'Montserrat';
+  font-weight: 510;
+  letter-spacing: 0.05rem;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9em;
+  color: #291010;
+  padding: 5px 6px;
+}
+
+.reduce_Event_Button_Text  {font-size: 0.75em}
+
+.event_Button_Text p {margin-bottom: 0;}
+
+
+/* Input Class (Right Side)
+------------------------------------------------------------*/
+.on_Right {
+  float: left;
+  text-align: center;
+  width: 47%;
+}
+
+.input_place {
+  width: 400px;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  box-sizing: border-box;
+  border: 1px solid #000000;
+  border-radius: 3px;
+}
+
+.header_Text {
+  word-wrap: break-word;
+  font-size: 25px;
+	font-family: "Lato";
+}
+
+.class_Text {
+  word-wrap: break-word;
+  font-size: 15px;
+	font-family: verdana;
+}
+
+.section_Divider {
+  padding: 0;
+  text-align: center;
+  border-top: solid 0.1rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.Dark-Line {
+  border-color: #333;
+}
+
+.Light-Line {
+  border-color: #333;
+  opacity: 0.5;
+}
+
+.display_Class_Button {
+  width: 100px;
+  line-height: 40px;
+  margin: 0;
+  padding: 0;
+  color: white;
+  position: relative;
+  font-weight: 450;
+  font-size: 0.9rem;
+}
+
+/* Add Your Own Activity
+------------------------------------------------------------*/
+
+.user_Inputs[type=text] {
+    width: 100%;
+    padding: 8px 20px;
+    margin: 8px 5px;
+    box-sizing: border-box;
+    border-bottom: 2px solid #000000;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.activity_IDs {margin-bottom: 10px;}
+
+hr::after {
+  position: relative;
+  top: -.8em;
+  display: inline-block;
+  padding: 0 0.25em;
+  content: '';
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 2em;
+}
+
+.Star-Underline {
+  max-width: 15rem;
+  text-align: center;
+  border-top: solid 0.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 2.5rem;
+  border-radius: 1rem;
+  width: 7rem;
+  margin: 1rem;
+}
+
+.combine-star-underline {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.combine-star-underline .star-icon {
+  font-size: 1.4rem;
+}
+
+.close_Button {
+  position: relative;
+}
+
+.modal_Header {
+  position: relative;
+}
+
+.modal_Header_Text {
+  position: absolute;
+  width: 100%;
+}
+
+.modal_Form {
+  padding: 0px 20px;
+}
+
+
+/* Find Class (Right Side)
+------------------------------------------------------------*/
+table.class_Options thead tr th {
+  border-bottom: 2px solid black;
+  border-left: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+  background-color: white;
+  padding: 10px 10px;
+}
+
+.small_Col {
+  width: 8%;
+  background-color: white;
+}
+
+table.class_Options tr td {
+  border-right: 1px solid lightgrey;
+  border-left: 1px solid lightgrey;
+  padding: 10px 10px;
+  height: 1.5rem;
+}
+
+table.class_Options tr td:nth-child(3) {text-align: left;}
+table.class_Options tr th:nth-child(3) {text-align: left;}
+
+table:last-child.class_Options {
+  border-bottom: 1px solid black;
+}
+
+
+table.class_Options tr:nth-child(2n) {background-color: #f2f2f2;}
+table.class_Options tr:nth-child(2n) {
+  border-bottom: 1px solid black;
+  background-color: #f2f2f2;
+}
+
+.table-wrapper {
+  max-height: 400px;
+  width: 100%;
+  overflow: auto;
+  display:inline-block;
+}
+
+table.class_Options td:nth-child(2) {text-transform: capitalize;}
+
+#class_Table th, td {white-space: nowrap;}
+
+.link_button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cumulative_Class_Info_Text {
+  color: #212529;
+  font-family: "Montserrat";
+  font-weight: 500;
+  line-height: 0.8;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+/* See Class Description (Right Side)
+------------------------------------------------------------*/
+.class_Code_Text {
+  font-size: 20px;
+	font-family: verdana;
+  font-weight: bold;
+}
+
+.class_Name_Text {
+  font-size: 20px;
+	font-family: verdana;
+}
+
+.class_Description_Text {
+  font-size: 15px;
+	font-family: verdana;
+  margin-bottom: 4rem;
+}
+
+.prereq_Text {
+  font-size: 14px;
+	font-family: verdana;
+  font-style: italic;
+}
+
+.small_Description_Text {
+  font-size: 14px;
+	font-family: verdana;
+  line-height: 1.2rem;
+  text-transform: capitalize;
+}
+
+.small_Description_Text p {
+  margin-bottom: 0.2rem;
+}
+
+#class_Description {
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.add_Button {
+  height: 2rem;
+  padding: 0px 16px 32px;
+  font-weight: bold;
+  float: right;
+  transform: scale(0.87, 1)
+}
+
+
+
+/* FOOTER
+------------------------------------------------------------*/
+.footer {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-color: #2c3e50;
+  color: #fff;
+}
+
+footer li {line-height: 52px;}
+
+
+/* Copywrite and Scroll Up Section
+------------------------------------------------------------*/
+.copyright {
+  background-color: #1a252f;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+  height: 3rem;
+  padding-top: 0.7rem;
+}
+
+.scroll-to-top {
+  z-index: 1042;
+  right: 1rem;
+  bottom: 1rem;
+  display: none;
+}
+.scroll-to-top a {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: rgba(33, 37, 41, 0.5);
+  line-height: 3.1rem;
+}
+
+.position-fixed {position: fixed !important;}
+.d-block {display: block !important;}
+.rounded {border-radius: 0.5rem !important;}
+
+
+/* Web Safety */
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
