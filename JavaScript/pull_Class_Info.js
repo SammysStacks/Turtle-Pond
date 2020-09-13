@@ -1,5 +1,7 @@
 // Set Global Variables
 window.calendar_Add_on_Counter = 0;
+window.color_Changing_Time = false;
+window.good_Sections = [];
 window.filter_Class_Term;
 window.num_Overlay = 0;
 window.pageState;
@@ -12,6 +14,31 @@ window.calendar_Event_Colors = [
   "#FF8B8B",   // Light Pink
   "#ffc804"    // Yellow
 ]
+
+function change_Btn_Colors(event_Class_ID_List, class_Code) {
+  // After holding for 2 seconds, switch colors
+  var delayInMilliseconds = 1250; // Time to Delay in MiliSeconds
+  window.color_Changing_Time = true;
+  let interval = setInterval(function() {
+    // Stop when mouse is up
+    if (window.color_Changing_Time === false) {clearInterval(interval); savePageState(); return false;}
+    // Get Color
+    window.calendar_Add_on_Counter = window.calendar_Add_on_Counter + 1;
+    let new_Color = window.calendar_Event_Colors[window.calendar_Add_on_Counter%window.calendar_Event_Colors.length];
+    // Change the Color of Events in Calendar
+    var changing_Events = document.getElementsByClassName(event_Class_ID_List[0]);
+    for (let i = 0; i < changing_Events.length; i++) {
+      changing_Event = changing_Events[i]
+      changing_Event.style.backgroundColor = new_Color}
+    // Change the Color of Events in Class List
+    var display_Button = document.getElementsByClassName(event_Class_ID_List[1]);
+    var display_Button_Copy = [...display_Button];
+    for (var i=display_Button.length-1; i >= 0; i--) {
+      if (display_Button[i].innerText === class_Code) {
+        display_Button[i].style.backgroundColor = new_Color;}
+      }
+  }, delayInMilliseconds);
+}
 
 function fix_Overlapping_Events(parent, action_Child, stage) {
   // Initialize Variable for the Removing/Adding Process
@@ -206,6 +233,94 @@ function switch_Section(button_Classname_Identifier, display_Button_Classname_Id
   add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number);
 }
 
+function edit_Total_Class_Conformations_Counter() {
+  // Get All Classes to Recalculate Total Conformations
+  var calendar_Events_List = document.querySelectorAll("#display_Added_Classes button");
+  let previous_Total_Conformations = 1;
+  let previous_Total_Conformations_Element = document.getElementById('total_Class_Conformation')
+  previous_Total_Conformations_Element.innerText = previous_Total_Conformations
+  for (var i = 0; i < calendar_Events_List.length; i++) {
+      let calendar_Event = calendar_Events_List[i];
+      let event_Listener_Info = calendar_Event.querySelector("p.hidden_Event_Listeners").innerText.split(",||| split the text here |||,");
+      let section_Info_Holder = JSON.parse(event_Listener_Info[8]);
+      let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
+      console.log(section_Info_Holder, section_Info)
+
+      // Find total Sections in Event that we are Losing/Gaining
+      let num_Sections = 0;
+      for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {num_Sections += 1}}
+      if (num_Sections <= 1) {return false;}  // No Good New Sections Added (Either 0 or 1)
+      //let previous_Total_Conformations = previous_Total_Conformations_Element.innerHTML
+      previous_Total_Conformations = previous_Total_Conformations*num_Sections
+      previous_Total_Conformations_Element.innerText = previous_Total_Conformations
+  }
+  // Save New Sections to Global window
+  compile_Good_Sections_for_Conformation()
+}
+
+function change_Class_Conformation(mode) {
+  // Find and Change Current Conformation number (Reset if at Final Stage)
+  let current_Conformations_Element = document.getElementById('current_Class_Conformation')
+  let previous_Total_Conformations_Element = document.getElementById('total_Class_Conformation')
+  if (mode === "right") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) + 1}
+  else if (mode === "left") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) - 1}
+  if (parseInt(current_Conformations_Element.innerHTML) > parseInt(previous_Total_Conformations_Element.innerHTML)) {current_Conformations_Element.innerHTML = 1}
+  if (parseInt(current_Conformations_Element.innerHTML) < 1) {current_Conformations_Element.innerHTML = 1}
+  // Find all Good Sections in Current Class List
+  if (parseInt(previous_Total_Conformations_Element.innerHTML) <= 1) {return false;}
+  let steps_to_New_Conformation = window.good_Sections[parseInt(current_Conformations_Element.innerHTML) - 1]
+  for (let i = 0; i < steps_to_New_Conformation.length; i ++) {
+      let event_Listener_Info = steps_to_New_Conformation[i].split(",||| split the text here |||,");
+      // Decompact Info into Variabls We Use
+      let button_Classname_Identifier = event_Listener_Info[0]; let display_Button_Classname_Identifier = event_Listener_Info[1];
+      let class_Code = event_Listener_Info[2]; let class_Term = event_Listener_Info[3]; let class_Units = event_Listener_Info[4];
+      let class_Name = event_Listener_Info[5]; let prereqs = event_Listener_Info[6];
+      let text_description = event_Listener_Info[7]; let section_Number = event_Listener_Info[9]
+      let section_Info_Holder = JSON.parse(event_Listener_Info[8])
+      let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
+      // Switch One Section
+      add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) // User Wont notice but an error wil fire if not present (else remove function changes add/remove button text of wrong class)
+      switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number)
+  }
+}
+
+function compile_Good_Sections_for_Conformation() {
+  // Find all Good Sections in Current Class List
+  var calendar_Events_List = document.querySelectorAll("#display_Added_Classes button");
+  var good_Sections = []
+  for (var i = 0; i < calendar_Events_List.length; i++) {
+    // Finall Class Information
+    let calendar_Event = calendar_Events_List[i];
+    let unsplit_Event_Listerner_Info = calendar_Event.querySelector("p.hidden_Event_Listeners").innerText
+    let event_Listener_Info = unsplit_Event_Listerner_Info.split(",||| split the text here |||,");
+    let section_Info_Holder = JSON.parse(event_Listener_Info[8]);
+    let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
+    // Get a List of all Possible Sections
+    let current_Good_Sections = [];
+    for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {current_Good_Sections.push(unsplit_Event_Listerner_Info + ",||| split the text here |||," + section_Key)}}
+    good_Sections.push(current_Good_Sections)
+  }
+  let permuted_Good_Sections = [[]];
+  permuted_Good_Sections = recursive_Permutation(good_Sections, permuted_Good_Sections)
+  permuted_Good_Sections = permuted_Good_Sections.splice(0,permuted_Good_Sections.length-1) // Remove Last Element (Which is [] and leftover from recursion
+  window.good_Sections = permuted_Good_Sections
+}
+
+// This Function will Permute the CLasses into a list of next steps. However, the LAST element will always be [] and should be deleted
+function recursive_Permutation(good_Sections, permuted_Good_Sections) {
+    // Base case
+    if (good_Sections.length === 0) {
+        permuted_Good_Sections.push([]);
+        return permuted_Good_Sections;}
+    // Recurse Down
+    let good_Section = good_Sections[0]
+    for (let i=0; i < good_Section.length; i++) {
+        let good_Section_Value = good_Section[i];
+        permuted_Good_Sections[permuted_Good_Sections.length - 1].push(good_Section_Value)
+        permuted_Good_Sections = recursive_Permutation([...good_Sections].splice(1,good_Sections.length), permuted_Good_Sections)}
+    return permuted_Good_Sections
+}
+
 function add_Activity() {
   // Get Info From Form
   let class_Term = window.filter_Class_Term;
@@ -259,12 +374,17 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
   display_button.ondblclick =
         function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
           remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+  display_button.onmousedown =
+        function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code) {
+          change_Btn_Colors([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code)}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code);
+  display_button.onmouseup = function() {window.color_Changing_Time = false;}
+  display_button.onmouseout = function() {window.color_Changing_Time = false;}
   display_button.className = display_Button_Classname_Identifier;
   display_button.innerText = class_Code;
   display_button.style.backgroundColor = window.calendar_Event_Colors[window.calendar_Add_on_Counter%window.calendar_Event_Colors.length];
   btn_Hidden = document.createElement('p')
   btn_Hidden.className = 'hidden_Event_Listeners'
-  btn_Hidden.innerText = [button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
+  btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
   display_button.appendChild(btn_Hidden).html;
   btn_Hidden.hidden = true
   var class_List_Display = document.querySelector('#display_Added_Classes');
@@ -344,7 +464,7 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
           btn_Loc.innerText = class_Location
           btn_Hidden = document.createElement('p')
           btn_Hidden.className = 'hidden_Event_Listeners'
-          btn_Hidden.innerText = [button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
+          btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
           btn_Div = document.createElement('div');
           btn_Div.appendChild(btn_Time).html; btn_Div.appendChild(btn_Class).html; btn_Div.appendChild(btn_Loc).html; btn_Div.appendChild(btn_Hidden).html;
           btn.appendChild(btn_Div)
@@ -355,12 +475,13 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
           calendar_Cell.appendChild(btn).html;
       }
     }
+    edit_Total_Class_Conformations_Counter()
     savePageState();
 }
 
 
 function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-  // Change Button Click to Add class
+  // Change Button Click Text/OnClick to Add class
   var remove_Class = document.getElementById('add_Button_Click').onclick =
       function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
         add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
@@ -378,6 +499,7 @@ function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units,
       edit_Total_Units(class_Units, "remove")
       fix_Overlapping_Events(display_Button[0].parentNode, display_Button[i], "remove");
       display_Button[0].parentNode.removeChild(display_Button[i]);}}
+  edit_Total_Class_Conformations_Counter()
   savePageState();
 }
 
@@ -449,7 +571,7 @@ function find_Classes() {
   console.log(window.filter_Class_Term)
   class_Table_Body = document.getElementById("class_Data")
   class_Table_Body.querySelectorAll('*').forEach(n => n.remove());
-  $.getJSON("Database/department_data_Old_Style.json", function(json) {
+  $.getJSON("Database/department_data_Old_Style.json", {}, function(json) {
     var data = eval(json); // this will convert your json string to a javascript object
     for (var key in data) {
         // this will check if key is owned by data object and not by any of it's ancestors
@@ -495,22 +617,28 @@ function find_Classes() {
   })
 }
 
-function add_Onclick_Events_Back(events) {
+function add_Onclick_Events_Back(events, color_Control = false) {
   for (var i = 0; i < events.length; i++) {
     let calendar_Event = events[i];
-    let event_Listener_Info = calendar_Event.querySelector("p.hidden_Event_Listeners").innerText.split(",");
+    let event_Listener_Info = calendar_Event.querySelector("p.hidden_Event_Listeners").innerText.split(",||| split the text here |||,");
     let button_Classname_Identifier = event_Listener_Info[0]; let display_Button_Classname_Identifier = event_Listener_Info[1];
     let class_Code = event_Listener_Info[2]; let class_Term = event_Listener_Info[3]; let class_Units = event_Listener_Info[4];
     let class_Name = event_Listener_Info[5]; let prereqs = event_Listener_Info[6];
-    let final_Two = event_Listener_Info.splice(7, event_Listener_Info.length-1).join(",").split(",||| split the text here |||,")
-    let text_description = final_Two[0];
-    let section_Info_Holder = JSON.parse(final_Two[1]);
+    let text_description = event_Listener_Info[7];
+    let section_Info_Holder = JSON.parse(event_Listener_Info[8]);
     calendar_Event.onclick =
           function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
             add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
     calendar_Event.ondblclick =
           function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
             remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+    if (color_Control) {
+        calendar_Event.onmousedown =
+              function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code) {
+                change_Btn_Colors([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code)}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code);
+        calendar_Event.onmouseup = function() {window.color_Changing_Time = false;}
+        calendar_Event.onmouseout = function() {window.color_Changing_Time = false;}
+    }
   }
 
 }
@@ -537,9 +665,10 @@ function load_TermState() {
   // Get Onclick Events backgroundColor
   var calendar_Events = document.querySelectorAll("#calendar_Body button");
   var calendar_Events_List = document.querySelectorAll("#display_Added_Classes button");
-  add_Onclick_Events_Back(calendar_Events)
-  add_Onclick_Events_Back(calendar_Events_List)
-  // Show Units in New State
+  add_Onclick_Events_Back(calendar_Events, false)
+  add_Onclick_Events_Back(calendar_Events_List, true)
+  // Show Units/Conformations in New State
+  edit_Total_Class_Conformations_Counter()
   display_Units()
 }
 
@@ -564,8 +693,9 @@ $(document).ready(function(){
   if (typeof window.filter_Class_Term === 'undefined') {window.filter_Class_Term = "First"} // Display Only First Term
   // Check if Previous State is Availilbe
   window.pageState = JSON.parse(localStorage.getItem('pageState'));
-  console.log(window.pageState)
-  if (window.pageState === null) {
+  // Change this number if you want to clear all stored cookies/cache after a major change to the database
+  let refresh_Update_Number = 0
+  if (window.pageState === null || window.pageState.Updated != refresh_Update_Number) {
     let current_Class_List = document.getElementById("display_Added_Classes");
     let current_Calendar_State = document.getElementById("calendar_Body");
     let current_Class_Units = document.getElementById("cumulative_Class_Info");
@@ -582,12 +712,10 @@ $(document).ready(function(){
       Third: {
         class_List: current_Class_List.innerHTML,
         class_Units: current_Class_Units.innerHTML,
-        calendar_State: current_Calendar_State.innerHTML}
+        calendar_State: current_Calendar_State.innerHTML},
+      Updated: refresh_Update_Number
     };
     savePageState();}
-    //window.filter_Class_Term = "Third"; savePageState();
-    //window.filter_Class_Term = "Second"; savePageState();
-    //window.filter_Class_Term = "First"; savePageState(); print("all saved")}
   else {
     // Retrieve Previous State
     console.log("Found Previous Page State")

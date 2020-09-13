@@ -57,11 +57,11 @@ img {page-break-inside: avoid;}
 }
 
 .center {
-  display: inline-block;
   text-align: center;
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  display: block;
 }
 
 .btn:not(.nav-link):not(.event_Button_Text) {
@@ -73,6 +73,7 @@ img {page-break-inside: avoid;}
 
 .remove_Margin {margin: 0}
 
+.verticle_Center = {vertical-align: middle;}
 
 /* NAVIGATION BAR STYLES
 ------------------------------------------------------------*/
@@ -131,6 +132,43 @@ nav.navbar-shrink .navbar-toggle {
 }
 /* End Nav Shrink */
 
+/* Class Conformation Selector (Left Top)
+------------------------------------------------------------*/
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  padding: 5px;
+  background-color: #ffffff;
+  line-height: 1.2;
+  vertical-align: middle;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.class_Conformation_Class {
+  display: contents;
+  display: -moz-inline-stack;
+}
+
+.class_Conformation_Text {
+  color: #212529;
+  font-family: "Montserrat";
+  font-weight: 550;
+  line-height: 1.2;
+  font-size: 1.25em;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: middle;
+}
+
 /* Calendar (Left Side)
 ------------------------------------------------------------*/
 /* Header Text */
@@ -152,6 +190,7 @@ nav.navbar-shrink .navbar-toggle {
 
 .report_Button {
   background-color: #212529;
+  line-height: 1.2;
 }
 
 .report_Button_Text {
@@ -334,7 +373,6 @@ table.calendar tr:nth-child(2n) {
 .reduce_Event_Button_Text  {font-size: 0.75em}
 
 .event_Button_Text p {margin-bottom: 0;}
-
 
 /* Input Class (Right Side)
 ------------------------------------------------------------*/
