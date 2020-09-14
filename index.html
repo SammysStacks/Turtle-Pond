@@ -2,26 +2,23 @@
 <html lang = "en">
 <head>
   <!-- Required meta tags -->
-  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Caltech Course Picking Guide for Students">
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=9" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="UTF-8" />
 
+  <!-- JQuery -->
+  <script src="JavaScript/jquery-1.9.1.min.js" type="text/javascript"></script>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- Latest compiled Bootstrap JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <!-- Favicon-->
-  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico" />
   <!-- Font Awesome icons (free version)-->
   <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
   <!-- Google fonts-->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
-  <!-- helper library to Work with JQUERY Short Notation -->
-  <script src="JavaScript/jquery-1.9.1.min.js" type="text/javascript"></script>
   <!-- jQuery library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -52,7 +49,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
   <!-- Navigation Bar Start -->
-  <nav id="navBar" class="navbar navbar-expand-lg text-uppercase fixed-top navbar-dark bg-dark" role="navigation">
+  <nav id="navBar" class="navbar navbar-expand-lg text-uppercase fixed-top navbar-dark bg-dark">
     <!-- Hamburger Drop Down When User Zooms in too Much -->
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse">
       <span class="navbar-toggler-icon"></span>
@@ -62,7 +59,7 @@
         <span class="navbar-brand"> Caltech Calendar </span>
         <div class="collapse navbar-collapse text-white">
           <ul class = "navbar-nav ml-auto pull-right">
-            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('First')"> Fall Term (2021) </button></li>
+            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('First')"> Fall Term (2020) </button></li>
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Second')"> Winter Term (2020)</button></li>
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Third')"> Spring Term (2020) </button></li>
           </ul>
@@ -106,7 +103,7 @@
                <p class="mb-3 pop-up-text text-justify-center  ml-auto mr-auto">
                  <span class="bold"> NOTE: </span> This site is regularly updated/maintained. If an error occurs, please first clear <span class="bold"> ALL </span> cache (from beginning of time) to see if the problem has already been resolved (control-shift-delete -> clear Cache + Cookies + Website Data).
                 </p>
-               <form action="mailto:SolomonS@caltech.edu" method="post" enctype=”multipart/form-data” class = "mb-4">
+               <form action="mailto:SolomonS@caltech.edu" method="post" class = "mb-4">
           			<label for = "Message"> </label>
         				 	<textarea id = "Message" name = "message" rows = "10" cols = "40" placeholder = "Enter Message :)" class = "fancy_input comment_box_text"> </textarea>
           		 <div>
@@ -124,7 +121,7 @@
       <thead class="masthead">
         <tr>
           <th class="time_Col days"></th>
-          <th><str>Monday</span></th>
+          <th><span>Monday</span></th>
           <th><span>Tuesday</span></th>
           <th><span>Wednesday</span></th>
           <th><span>Thursday</span></th>
@@ -163,7 +160,7 @@
   <section class="container on_Right from_Top">
     <!-- Logo -->
     <div>
-      <img class = "logo" src="Images\Turtle_Pond_Logo.PNG"/ alt="logo"/>
+      <img class = "logo" src="Images/Turtle_Pond_Logo.PNG" alt="logo">
     </div>
     <!-- Icon Divider-->
     <hr class="section_Divider Light-Line">
@@ -180,7 +177,7 @@
     <div class="mt-3" id="display_Added_Classes"> </div>
     <div id="cumulative_Class_Info" class="cumulative_Class_Info_Text mt-3">
       <span>Total Units: </span>
-      <span id="units">0<span>
+      <span id="units">0</span>
     </div>
     <!-- Icon Divider-->
     <hr class="section_Divider Light-Line">
@@ -211,7 +208,7 @@
       <div class="modal-content">
         <!-- Header and Close Button 'X' -->
           <div class="d-flex modal_Header">
-            <h2 class="text-center ml-auto mr-auto text-uppercase pt-3 pop-up-header modal_Header_Text" id="Modal-Vili-Title"> Input Activity </h2>
+            <h2 class="text-center ml-auto mr-auto text-uppercase pt-3 pop-up-header modal_Header_Text" id="Modal-add_Activity-Title"> Input Activity </h2>
             <button id = "close_Modal_Button" type="button" class="btn portfolio-modal-dismiss close-x pull-right close_Button" data-dismiss="modal">
               <i class="fa fa-2x fa-times"></i>
             </button>
@@ -230,23 +227,18 @@
              <div class="container">
                <div class="row display-flex">
                  <div class="col-4 center">
-                     <label for = "class_Name"> </label>
-                       <p class = "activity_IDs"> Name </p>
-                     <label for = "class_Units"> </label>
-                       <p class = "activity_IDs"> Units </p>
-                     <label for = "class_Time"> </label>
-                       <p class = "activity_IDs"> Time </p>
-                     <label for = "class_Location"> </label>
-                       <p class = "activity_IDs"> Location </p>
-                     <label for = "class_Description"> </label>
-                       <p class = "activity_IDs"> Description </p>
+                     <p class = "activity_IDs"> Name </p>
+                     <p class = "activity_IDs"> Units </p>
+                     <p class = "activity_IDs"> Time </p>
+                     <p class = "activity_IDs"> Location </p>
+                     <p class = "activity_IDs"> Description </p>
                  </div>
                  <div class="col-8 center">
-                       <input id="added_Class_Name" class = "user_Inputs" type = "text" placeholder = "CS 130" />
-                       <input id="added_Class_Units" class = "user_Inputs" type = "text" placeholder = "3-0-9" />
-                       <input id="added_Class_Time" class = "user_Inputs" type = "text" placeholder = "M 13:00 - 15:55, TR 8:00 - 9:00" />
-                       <input id="added_Class_Loc" class = "user_Inputs" type = "text" placeholder = "232 GUG" />
-                       <input id="added_Class_Description" class = "user_Inputs" type = "text" placeholder = "Fun Learning" />
+                       <label for = "added_Class_Name">  <input id="added_Class_Name" class = "user_Inputs" type = "text" placeholder = "CS 130" /> </label>
+                       <label for = "added_Class_Units"> <input id="added_Class_Units" class = "user_Inputs" type = "text" placeholder = "3-0-9" /> </label>
+                       <label for = "added_Class_Time"> <input id="added_Class_Time" class = "user_Inputs" type = "text" placeholder = "M 13:00 - 15:55, TR 8:00 - 9:00" /> </label>
+                       <label for = "added_Class_Loc"> <input id="added_Class_Loc" class = "user_Inputs" type = "text" placeholder = "232 GUG" /> </label>
+                       <label for = "added_Class_Description"> <input id="added_Class_Description" class = "user_Inputs" type = "text" placeholder = "Fun Learning" /> </label>
                  </div>
                </div>
                <div class="row display-flex">
@@ -266,7 +258,7 @@
   <!-- Copyright Section-->
   <!--
   <footer class="copyright mt-5 text-center text-white">
-      <div class="copyright"><small>Copyright © Samuel Solomon -->
+      <div class="copyright"><small>Copyright &copy; Samuel Solomon -->
         <!-- Generate Current Date -->
         <!--
         <script type="text/javascript">document.write(new Date().getFullYear());</script>

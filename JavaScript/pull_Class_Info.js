@@ -244,12 +244,11 @@ function edit_Total_Class_Conformations_Counter() {
       let event_Listener_Info = calendar_Event.querySelector("p.hidden_Event_Listeners").innerText.split(",||| split the text here |||,");
       let section_Info_Holder = JSON.parse(event_Listener_Info[8]);
       let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
-      console.log(section_Info_Holder, section_Info)
 
       // Find total Sections in Event that we are Losing/Gaining
       let num_Sections = 0;
       for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {num_Sections += 1}}
-      if (num_Sections <= 1) {return false;}  // No Good New Sections Added (Either 0 or 1)
+      if (num_Sections <= 1) {continue;}  // No Good New Sections Added (Either 0 or 1)
       //let previous_Total_Conformations = previous_Total_Conformations_Element.innerHTML
       previous_Total_Conformations = previous_Total_Conformations*num_Sections
       previous_Total_Conformations_Element.innerText = previous_Total_Conformations
@@ -571,8 +570,13 @@ function find_Classes() {
   console.log(window.filter_Class_Term)
   class_Table_Body = document.getElementById("class_Data")
   class_Table_Body.querySelectorAll('*').forEach(n => n.remove());
-  $.getJSON("Database/department_data_Old_Style.json", {}, function(json) {
-    var data = eval(json); // this will convert your json string to a javascript object
+  $.ajax({
+    url: "Database/department_data_Old_Style.json",
+    beforeSend: function(xhr){
+    if (xhr.overrideMimeType) {xhr.overrideMimeType("application/json");}},
+    dataType: 'json',
+    success: function(url) {
+    var data = eval(url); // this will convert your json string to a javascript object
     for (var key in data) {
         // this will check if key is owned by data object and not by any of it's ancestors
         if (data.hasOwnProperty(key)) {
@@ -614,6 +618,7 @@ function find_Classes() {
                   add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
         }
     }
+  }
   })
 }
 

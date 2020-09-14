@@ -446,7 +446,7 @@ table.calendar tr:nth-child(2n) {
     border-right: none;
 }
 
-.activity_IDs {margin-bottom: 10px;}
+.activity_IDs {margin-bottom: 43px; margin-top: 20px;}
 
 hr::after {
   position: relative;
