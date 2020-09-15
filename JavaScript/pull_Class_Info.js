@@ -260,6 +260,7 @@ function edit_Total_Class_Conformations_Counter() {
 function change_Class_Conformation(mode) {
   // Find and Change Current Conformation number (Reset if at Final Stage)
   let current_Conformations_Element = document.getElementById('current_Class_Conformation')
+  console.log(current_Conformations_Element.innerHTML)
   let previous_Total_Conformations_Element = document.getElementById('total_Class_Conformation')
   if (mode === "right") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) + 1}
   else if (mode === "left") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) - 1}
@@ -267,6 +268,7 @@ function change_Class_Conformation(mode) {
   if (parseInt(current_Conformations_Element.innerHTML) < 1) {current_Conformations_Element.innerHTML = 1}
   // Find all Good Sections in Current Class List
   if (parseInt(previous_Total_Conformations_Element.innerHTML) <= 1) {return false;}
+  console.log(current_Conformations_Element.innerHTML)
   let steps_to_New_Conformation = window.good_Sections[parseInt(current_Conformations_Element.innerHTML) - 1]
   for (let i = 0; i < steps_to_New_Conformation.length; i ++) {
       let event_Listener_Info = steps_to_New_Conformation[i].split(",||| split the text here |||,");
@@ -297,15 +299,16 @@ function compile_Good_Sections_for_Conformation() {
     // Get a List of all Possible Sections
     let current_Good_Sections = [];
     for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {current_Good_Sections.push(unsplit_Event_Listerner_Info + ",||| split the text here |||," + section_Key)}}
-    good_Sections.push(current_Good_Sections)
+    if (current_Good_Sections.length > 1) {good_Sections.push(current_Good_Sections)}
   }
   let permuted_Good_Sections = [[]];
   permuted_Good_Sections = recursive_Permutation(good_Sections, permuted_Good_Sections)
-  permuted_Good_Sections = permuted_Good_Sections.splice(0,permuted_Good_Sections.length-1) // Remove Last Element (Which is [] and leftover from recursion
+  permuted_Good_Sections.pop() // Remove Last Element (Which is [] and leftover from recursion
   window.good_Sections = permuted_Good_Sections
 }
 
 // This Function will Permute the CLasses into a list of next steps. However, the LAST element will always be [] and should be deleted
+// Will NOT WORK with empty arrays ([]), NOT CHECKED for arrays of length 1 ([1])
 function recursive_Permutation(good_Sections, permuted_Good_Sections) {
     // Base case
     if (good_Sections.length === 0) {
