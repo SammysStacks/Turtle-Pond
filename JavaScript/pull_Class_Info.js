@@ -5,13 +5,14 @@ window.good_Sections = [];
 window.filter_Class_Term;
 window.num_Overlay = 0;
 window.pageState;
+// FOR THE SECTION CHANGE TO WORK THIS MUST BE LOWERCASE
 window.calendar_Event_Colors = [
-  "#FFAA01",   // Orange (First Color Gets Skipped in Line Up)
+  "#ffaa01",   // Orange (First Color Gets Skipped in Line Up)
   "#727cff",   // Blue
   "#f35274",   // Red
   "#e45bf1",   // Purple
-  "#13CA91",   // Green
-  "#FF8B8B",   // Light Pink
+  "#13ca91",   // Green
+  "#ff8b8b",   // Light Pink
   "#ffc804"    // Yellow
 ]
 
@@ -229,8 +230,8 @@ function display_Sections(class_Code, class_Term, class_Units, class_Name, prere
 }
 
 function switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number) {
-  remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
-  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number);
+  let color_to_Kepp = remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, true);
+  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number, color_to_Kepp);
 }
 
 function edit_Total_Class_Conformations_Counter() {
@@ -247,7 +248,11 @@ function edit_Total_Class_Conformations_Counter() {
 
       // Find total Sections in Event that we are Losing/Gaining
       let num_Sections = 0;
-      for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {num_Sections += 1}}
+      let previous_Inputs = [];
+      for (var section_Key in section_Info) {
+        if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0]) && !previous_Inputs.includes(JSON.stringify(section_Info[section_Key]))) {
+          previous_Inputs.push(JSON.stringify(section_Info[section_Key]));
+          num_Sections += 1;}}
       if (num_Sections <= 1) {continue;}  // No Good New Sections Added (Either 0 or 1)
       //let previous_Total_Conformations = previous_Total_Conformations_Element.innerHTML
       previous_Total_Conformations = previous_Total_Conformations*num_Sections
@@ -260,7 +265,6 @@ function edit_Total_Class_Conformations_Counter() {
 function change_Class_Conformation(mode) {
   // Find and Change Current Conformation number (Reset if at Final Stage)
   let current_Conformations_Element = document.getElementById('current_Class_Conformation')
-  console.log(current_Conformations_Element.innerHTML)
   let previous_Total_Conformations_Element = document.getElementById('total_Class_Conformation')
   if (mode === "right") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) + 1}
   else if (mode === "left") {current_Conformations_Element.innerHTML = parseInt(current_Conformations_Element.innerHTML) - 1}
@@ -268,7 +272,6 @@ function change_Class_Conformation(mode) {
   if (parseInt(current_Conformations_Element.innerHTML) < 1) {current_Conformations_Element.innerHTML = 1}
   // Find all Good Sections in Current Class List
   if (parseInt(previous_Total_Conformations_Element.innerHTML) <= 1) {return false;}
-  console.log(current_Conformations_Element.innerHTML)
   let steps_to_New_Conformation = window.good_Sections[parseInt(current_Conformations_Element.innerHTML) - 1]
   for (let i = 0; i < steps_to_New_Conformation.length; i ++) {
       let event_Listener_Info = steps_to_New_Conformation[i].split(",||| split the text here |||,");
@@ -298,7 +301,11 @@ function compile_Good_Sections_for_Conformation() {
     let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
     // Get a List of all Possible Sections
     let current_Good_Sections = [];
-    for (var section_Key in section_Info) {if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0])) {current_Good_Sections.push(unsplit_Event_Listerner_Info + ",||| split the text here |||," + section_Key)}}
+    let previous_Inputs = [];
+    for (var section_Key in section_Info) {
+      if (!["A", "+", "NA", "NaN"].includes(section_Info[section_Key]["section_Time"][0]) && !previous_Inputs.includes(JSON.stringify(section_Info[section_Key]))) {
+        previous_Inputs.push(JSON.stringify(section_Info[section_Key]));
+        current_Good_Sections.push(unsplit_Event_Listerner_Info + ",||| split the text here |||," + section_Key)}}
     if (current_Good_Sections.length > 1) {good_Sections.push(current_Good_Sections)}
   }
   let permuted_Good_Sections = [[]];
@@ -352,10 +359,18 @@ function add_Activity() {
   add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder)
 }
 
+function rgbToHex(rgb) {
+  let color_List = rgb.match(/\d+/g).map(Number);
+  let r = parseInt(color_List[0]); let g = parseInt(color_List[1]); let b = parseInt(color_List[2]);
+  let hex_Color = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  return hex_Color
+}
+
 // Function to Add Classes to the HTML Calendar Table
-function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number = -1) {
+function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number = -1, color_to_Keep = "") {
   edit_Total_Units(class_Units, "add") // Add Total Units
   window.calendar_Add_on_Counter = window.calendar_Add_on_Counter + 1;
+  if (color_to_Keep != "") {window.calendar_Add_on_Counter = window.calendar_Event_Colors.indexOf(rgbToHex(color_to_Keep));}
 
   // Get Section Info
   let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
@@ -445,7 +460,6 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
                 function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
                   remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
           // Get Parent on Table (The Start Time) To Place the Button
-          console.log(day)
           calendar_Cell = document.querySelector('#' + day);
           // Customize Button Height/Width to Match CURRENT Table (zooming is messing things up now)
           btn.style.height = String(1.5*num_Added) + "rem";
@@ -482,7 +496,7 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
 }
 
 
-function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
+function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, keep_Color = false) {
   // Change Button Click Text/OnClick to Add class
   var remove_Class = document.getElementById('add_Button_Click').onclick =
       function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
@@ -500,9 +514,11 @@ function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units,
     if (display_Button[i].innerText === class_Code) {
       edit_Total_Units(class_Units, "remove")
       fix_Overlapping_Events(display_Button[0].parentNode, display_Button[i], "remove");
+      var color_to_Keep = display_Button[i].style.backgroundColor
       display_Button[0].parentNode.removeChild(display_Button[i]);}}
   edit_Total_Class_Conformations_Counter()
   savePageState();
+  if (keep_Color) {return color_to_Keep;}
 }
 
 function to_Clock_Time(time) {
@@ -570,7 +586,6 @@ function display_Units() {
 }
 
 function find_Classes() {
-  console.log(window.filter_Class_Term)
   class_Table_Body = document.getElementById("class_Data")
   class_Table_Body.querySelectorAll('*').forEach(n => n.remove());
   $.ajax({
