@@ -83,10 +83,10 @@ function search_Database() {
   tr = table.getElementsByTagName("tr");
   for (i = 0; i < tr.length; i++) {
       td_Col1 = tr[i].getElementsByTagName("td")[0];
-      td_Col3 = tr[i].getElementsByTagName("td")[2];
+      td_Search = tr[i].getElementsByTagName("td")[3];
       if (td_Col1) {
         txtValue_Col1 = td_Col1.textContent || td_Col1.innerText;
-        txtValue_Col3 = td_Col3.textContent || td_Col3.innerText;
+        txtValue_Col3 = td_Search.textContent || td_Search.innerText;
         // If Input Found in Text, Display it
         if (txtValue_Col1.toUpperCase().indexOf(filter) > -1 || txtValue_Col3.toUpperCase().indexOf(filter) > -1) {
           tr[i].style.display = "";}
@@ -129,19 +129,25 @@ function get_Loc_Info_From_Section(section_Info, section_Number = -1) {
 }
 
 // Function to Output Class Details When Class Code is Clicked in Table
-function add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
+function add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
   // Extract Information for Each Section
   let grading_Scheme = "NA";
   let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
   for (var section_Key in section_Info) {grading_Scheme = section_Info[section_Key]['section_Grading']; break}
   if (grading_Scheme === "" || grading_Scheme === " ") {grading_Scheme = "NA";}
+  // Extract Class Evaluation Information
+  let class_Hours = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['class_Hours']
+  let class_Rating = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['class_Rating']
+  let course_Eval_URL = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['course_Eval_URL']
+  // Write to HTML
   var describe_Class = '<hr class="section_Divider Dark-Line mt-4">'
   describe_Class += '<div class="pt-3">'
   describe_Class += '<span class="class_Code_Text">'+class_Code+': </span>'
   describe_Class += '<span class="class_Name_Text">' + class_Name + '</span>'
   describe_Class += "<button id='add_Button_Click' class='add_Button btn btn-outline-danger mb-1')>Add Class</button>"
   describe_Class += '<div class="small_Description_Text">'
-  describe_Class += '<p class="prereq_Text">'+prereqs+'</p>'
+  //describe_Class += '<p class="prereq_Text">'+prereqs+'</p>'
+  if (course_Eval_URL != "NA") {describe_Class += "<p><a href='"+course_Eval_URL+"' target='_blank'>Course Evaluation</a> "+"{Time Spent Outside of Class: "+class_Hours+" Hours; Overall Rating: "+class_Rating+'}</p>'}
   describe_Class += '<p>'+"Units: "+class_Units+"; Term: "+class_Term+";  Grading: "+grading_Scheme+'</p>'
   describe_Class += '</div>'
   if (section_Info != {} || Object.keys(section_Info).length > 1) {describe_Class += '<div id="display_Sections"><button class="link_button" id="section_Button"></button></div>'}
@@ -151,14 +157,14 @@ function add_Description(class_Code, class_Term, class_Units, class_Name, prereq
   describe_Class += '</div>'
   $('#class_Description').html(describe_Class);
   document.getElementById('add_Button_Click').onclick =
-      function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-        add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+      function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+        add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
   if (Object.keys(section_Info).length > 1) {
     let display_Section_Button = document.getElementById('section_Button')
     display_Section_Button.innerHTML = "(+)-Select Class Section";
     display_Section_Button.onclick =
-        function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-          display_Sections(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+        function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+          display_Sections(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
         }
 
 }
@@ -183,7 +189,7 @@ function round_Time(time) {
 }
 
 // Ask for User Section if One Availible
-function display_Sections(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
+function display_Sections(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
     var section_Div = document.querySelector('#display_Sections');
     var display_Section_Button = document.querySelector('#section_Button');
     // Remove Section from Displa
@@ -219,8 +225,8 @@ function display_Sections(class_Code, class_Term, class_Units, class_Name, prere
         var display_Button_Classname_Identifier = "btn button display_Class_Button";
         section_Number_Holder = parseInt(section_Key)
         users_Choice.onclick =
-            function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number_Holder) {
-              switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number_Holder);
+            function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number_Holder) {
+              switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number_Holder);
         // Add the Option to the HTML
         section_Holder.appendChild(users_Choice)
         section_Holder.appendChild(checkbox_Label)
@@ -229,9 +235,9 @@ function display_Sections(class_Code, class_Term, class_Units, class_Name, prere
     }
 }
 
-function switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number) {
-  let color_to_Kepp = remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, true);
-  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number, color_to_Kepp);
+function switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number) {
+  let color_to_Kepp = remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, true);
+  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number, color_to_Kepp);
 }
 
 function edit_Total_Class_Conformations_Counter() {
@@ -279,12 +285,13 @@ function change_Class_Conformation(mode) {
       let button_Classname_Identifier = event_Listener_Info[0]; let display_Button_Classname_Identifier = event_Listener_Info[1];
       let class_Code = event_Listener_Info[2]; let class_Term = event_Listener_Info[3]; let class_Units = event_Listener_Info[4];
       let class_Name = event_Listener_Info[5]; let prereqs = event_Listener_Info[6];
-      let text_description = event_Listener_Info[7]; let section_Number = event_Listener_Info[9]
+      let text_description = event_Listener_Info[7];
       let section_Info_Holder = JSON.parse(event_Listener_Info[8])
-      let section_Info = section_Info_Holder[String(window.filter_Class_Term).toLowerCase()]
+      let class_Evaluation_Holder = JSON.parse(event_Listener_Info[9])
+      let section_Number = event_Listener_Info[10]
       // Switch One Section
-      add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) // User Wont notice but an error wil fire if not present (else remove function changes add/remove button text of wrong class)
-      switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number)
+      add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) // User Wont notice but an error wil fire if not present (else remove function changes add/remove button text of wrong class)
+      switch_Section(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number)
   }
 }
 
@@ -344,6 +351,11 @@ function add_Activity() {
       'third': {"01": {"section_Instructor": "NA", "section_Time": ["A"], "section_Loc": ["A"], "section_Grading": "NA"}}
   }
   section_Info_Holder[class_Term.toLowerCase()] = {"01": {"section_Instructor": "NA", "section_Time": class_Times.split(", "), "section_Loc": [class_Loc], "section_Grading": "NA"}}
+  let class_Evaluation_Holder = {
+      'first': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+      'second': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+      'third': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+  }
   // Set Defaults if None given
   let class_Name = "Activity"
   let prereqs = "Prerequisites: NA"
@@ -355,8 +367,8 @@ function add_Activity() {
   // Close Form
   document.getElementById('close_Activity_Modal_Button').click()
   // Add Activity
-  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder)
-  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder)
+  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder)
+  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder)
 }
 
 function rgbToHex(rgb) {
@@ -367,7 +379,7 @@ function rgbToHex(rgb) {
 }
 
 // Function to Add Classes to the HTML Calendar Table
-function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, section_Number = -1, color_to_Keep = "") {
+function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, section_Number = -1, color_to_Keep = "") {
   edit_Total_Units(class_Units, "add") // Add Total Units
   window.calendar_Add_on_Counter = window.calendar_Add_on_Counter + 1;
   if (color_to_Keep != "") {window.calendar_Add_on_Counter = window.calendar_Event_Colors.indexOf(rgbToHex(color_to_Keep));}
@@ -379,18 +391,18 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
   button_Classname_Identifier = "btn event_Button_Text event_Button event_Button_" + class_Code.replace(" ","_");
   var display_Button_Classname_Identifier = "btn button display_Class_Button";
   document.getElementById('add_Button_Click').onclick =
-        function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-          remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+        function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+          remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
   document.querySelector('#add_Button_Click').innerText = 'Remove Class';
 
   // Place Button Under Class Display Section (Above Class Table)
   var display_button = document.createElement('button');
   display_button.onclick =
-        function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-          add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+        function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+          add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
   display_button.ondblclick =
-        function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-          remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+        function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+          remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
   display_button.onmousedown =
         function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code) {
           change_Btn_Colors([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code)}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code);
@@ -401,7 +413,7 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
   display_button.style.backgroundColor = window.calendar_Event_Colors[window.calendar_Add_on_Counter%window.calendar_Event_Colors.length];
   btn_Hidden = document.createElement('p')
   btn_Hidden.className = 'hidden_Event_Listeners'
-  btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
+  btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder), "||| split the text here |||", JSON.stringify(class_Evaluation_Holder)]
   display_button.appendChild(btn_Hidden).html;
   btn_Hidden.hidden = true
   var class_List_Display = document.querySelector('#display_Added_Classes');
@@ -454,11 +466,11 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
           btn = document.createElement('button');
           btn.className = button_Classname_Identifier;
           btn.onclick =
-                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-                  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+                  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
           btn.ondblclick =
-                function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-                  remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+                function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+                  remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
           // Get Parent on Table (The Start Time) To Place the Button
           calendar_Cell = document.querySelector('#' + day);
           // Customize Button Height/Width to Match CURRENT Table (zooming is messing things up now)
@@ -480,7 +492,7 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
           btn_Loc.innerText = class_Location
           btn_Hidden = document.createElement('p')
           btn_Hidden.className = 'hidden_Event_Listeners'
-          btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder)]
+          btn_Hidden.innerText = [button_Classname_Identifier, "||| split the text here |||", display_Button_Classname_Identifier, "||| split the text here |||", class_Code, "||| split the text here |||", class_Term, "||| split the text here |||", class_Units, "||| split the text here |||", class_Name, "||| split the text here |||", prereqs, "||| split the text here |||", text_description, "||| split the text here |||", JSON.stringify(section_Info_Holder), "||| split the text here |||", JSON.stringify(class_Evaluation_Holder)]
           btn_Div = document.createElement('div');
           btn_Div.appendChild(btn_Time).html; btn_Div.appendChild(btn_Class).html; btn_Div.appendChild(btn_Loc).html; btn_Div.appendChild(btn_Hidden).html;
           btn.appendChild(btn_Div)
@@ -496,11 +508,11 @@ function add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, tex
 }
 
 
-function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, keep_Color = false) {
+function remove_Button(event_Class_ID_List, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder, keep_Color = false) {
   // Change Button Click Text/OnClick to Add class
   var remove_Class = document.getElementById('add_Button_Click').onclick =
-      function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-        add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+      function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+        add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
   document.querySelector('#add_Button_Click').innerText = 'Add Class';
   // Removes an element from the document
   var events = document.getElementsByClassName(event_Class_ID_List[0]);
@@ -589,7 +601,7 @@ function find_Classes() {
   class_Table_Body = document.getElementById("class_Data")
   class_Table_Body.querySelectorAll('*').forEach(n => n.remove());
   $.ajax({
-    url: "Database/department_data_Old_Style.json",
+    url: "Database/courses_And_Ratings.json",
     beforeSend: function(xhr){
     if (xhr.overrideMimeType) {xhr.overrideMimeType("application/json");}},
     dataType: 'json',
@@ -606,10 +618,17 @@ function find_Classes() {
           let prereqs = data[key]['class_Prereqs']                // Example: Prerequisites: CS 1 or equivalent
           let text_description = data[key]['class_Description']   // Description of Class
           let section_Info_Holder = data[key]['section_Info']
+          let class_Evaluation_Holder = data[key]['course_Evaluation_Info']
+          let class_Hours = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['class_Hours']
+          let class_Rating = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['class_Rating']
+          let course_Eval_URL = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['course_Eval_URL']
           // Place Holders for Variables
           if (prereqs === "NA" || prereqs === "" || prereqs === " ") {prereqs = "Prerequisites: NA";}
-          if (class_Term === "NA" || class_Term === "" || class_Term === " ") {class_Term = "NA";}
+          if (class_Term === undefined || class_Term === "" || class_Term === " ") {class_Term = "NA";}
           if (text_description === "NA" || text_description === "" || text_description === " ") {text_description = "Description: NA";}
+          if (class_Hours === undefined || class_Hours === "" || class_Hours === " ") {class_Hours = "NA";}
+          if (class_Rating === undefined || class_Rating === "" || class_Rating === " ") {class_Rating = "NA";}
+          if (course_Eval_URL === undefined || course_Eval_URL === "" || course_Eval_URL === " ") {course_Eval_URL = "NA";}
           // Only Place in Table if in Correct Term
           if (class_Term.toUpperCase().includes(window.filter_Class_Term.toUpperCase()) === false && class_Term != "NA") {continue;}
           // Find the Total Class Units (if Given).
@@ -620,21 +639,25 @@ function find_Classes() {
           // Populate Display Table in HML (ON CLICK of the Class Code show Description)
           class_Table_Body = document.getElementById("class_Data")
           let class_Row = class_Table_Body.insertRow(0);
-          let code_Cell = class_Row.insertCell(0); let unit_Cell = class_Row.insertCell(1); let name_Cell = class_Row.insertCell(2);
+          let code_Cell = class_Row.insertCell(0); let unit_Cell = class_Row.insertCell(1);
+          let rating_Cell = class_Row.insertCell(2); let name_Cell = class_Row.insertCell(3);
           let code_Button = document.createElement('button');
           code_Button.innerHTML = class_Code; code_Button.className = 'link_button'; code_Button.id = class_Code;
           code_Cell.appendChild(code_Button);
           unit_Cell.innerHTML = class_Total_Units;
+          rating_Cell.innerHTML = class_Rating.split(" ± ")[0];
           name_Cell.innerHTML = class_Name;
+          name_Cell.className = "text_Left"
           class_Table_Body.appendChild(class_Row);
           // Add the Onlick Events to the Class Code link
           code_Button.onclick =
-                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-                  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+                  add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
           code_Button.ondblclick =
-                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-                  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+                function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+                  add_Class(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
         }
+        else {console.log(key)}
     }
   }
   })
@@ -649,12 +672,13 @@ function add_Onclick_Events_Back(events, color_Control = false) {
     let class_Name = event_Listener_Info[5]; let prereqs = event_Listener_Info[6];
     let text_description = event_Listener_Info[7];
     let section_Info_Holder = JSON.parse(event_Listener_Info[8]);
+    let class_Evaluation_Holder = JSON.parse(event_Listener_Info[9]);
     calendar_Event.onclick =
-          function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-            add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+          function(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+            add_Description(class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
     calendar_Event.ondblclick =
-          function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder) {
-            remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder);
+          function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder) {
+            remove_Button([button_Classname_Identifier, display_Button_Classname_Identifier], class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);}.bind(null, button_Classname_Identifier, display_Button_Classname_Identifier, class_Code, class_Term, class_Units, class_Name, prereqs, text_description, section_Info_Holder, class_Evaluation_Holder);
     if (color_Control) {
         calendar_Event.onmousedown =
               function(button_Classname_Identifier, display_Button_Classname_Identifier, class_Code) {
@@ -691,6 +715,7 @@ function load_TermState() {
   add_Onclick_Events_Back(calendar_Events, false)
   add_Onclick_Events_Back(calendar_Events_List, true)
   // Show Units/Conformations in New State
+  let current_Conformations_Element = document.getElementById('current_Class_Conformation').innerHTML = 1;
   edit_Total_Class_Conformations_Counter()
   display_Units()
 }
@@ -717,7 +742,7 @@ $(document).ready(function(){
   // Check if Previous State is Availilbe
   window.pageState = JSON.parse(localStorage.getItem('pageState'));
   // Change this number if you want to clear all stored cookies/cache after a major change to the database
-  let refresh_Update_Number = 0
+  let refresh_Update_Number = 2
   if (window.pageState === null || window.pageState.Updated != refresh_Update_Number) {
     let current_Class_List = document.getElementById("display_Added_Classes");
     let current_Calendar_State = document.getElementById("calendar_Body");

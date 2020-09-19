@@ -514,6 +514,14 @@ table.class_Options thead tr th {
   background-color: white;
 }
 
+.text_Left {
+  text-align: left;
+}
+
+.text_Center {
+  text-align: center;
+}
+
 table.class_Options tr td {
   border-right: 1px solid lightgrey;
   border-left: 1px solid lightgrey;
@@ -521,8 +529,8 @@ table.class_Options tr td {
   height: 1.5rem;
 }
 
-table.class_Options tr td:nth-child(3) {text-align: left;}
-table.class_Options tr th:nth-child(3) {text-align: left;}
+table.class_Options tr td:nth-child(4) {text-align: left;}
+table.class_Options tr th:nth-child(4) {text-align: left;}
 
 table:last-child.class_Options {
   border-bottom: 1px solid black;

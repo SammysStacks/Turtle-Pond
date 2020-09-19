@@ -126,10 +126,13 @@ def write_Data(data, class_Code, class_Name, class_Units, prereqs, class_Term, c
                         'second': {"01": {"section_Instructor": "NA", "section_Time": ["A"], "section_Loc": ["A"], "section_Grading": "NA"}}, 
                         'third': {"01": {"section_Instructor": "NA", "section_Time": ["A"], "section_Loc": ["A"], "section_Grading": "NA"}}
                     }
-                    # Some Info is Not Present Here
                     data[class_Code]['class_Term'] = class_Term
                     data[class_Code]['class_Prereqs'] = prereqs
                     data[class_Code]['class_Description'] = class_Description
+                    # Some Info is Not Present Here
+                    data[class_Code]['class_Hours'] = "NA"
+                    data[class_Code]['class_Rating'] = "NA"
+                    data[class_Code]['course_Eval_URL'] = "NA"
                 
                 # Write Info to JSON Database for Updated Input
                 # If Units Not Present

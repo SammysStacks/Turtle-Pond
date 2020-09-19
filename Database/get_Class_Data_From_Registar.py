@@ -9,7 +9,7 @@ Need to install the following via command line:
     pip install webdriver-manager
     python -m pip install -U selenium
     
-Takes around 50 minutes (+/- 15 per page)
+Takes around 45 minutes (+/- 15 per page)
 """
 
 # General Modules
@@ -82,7 +82,11 @@ def write_Data(data, class_Code, class_Units, class_Name, section_Info, URL):
                 # Some Info is Not Present Here
                 data[class_Code]['class_Prereqs'] = "NA"
                 data[class_Code]['class_Description'] = "NA"
-            
+                data[class_Code]['course_Evaluation_Info'] = {
+                        'first': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+                        'second': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+                        'third': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
+                    }
             # Write Info to JSON Database for Updated Input
             # If Units Not Present
             if data[class_Code]['class_Units'] in ["+", "NA", "", " "]:
@@ -152,11 +156,11 @@ for URL in course_URLs:
                 if section_Instructor not in ["NA", "", " "]:
                     section_Info[class_Section]['section_Instructor'] += section_Instructor
                 # If there is a New Time, It is New Information
-                elif section_Time not in ["NA", "", " "]:
+                elif section_Time not in ["NA", "", " ", "A"]:
                     section_Info[class_Section]['section_Time'].append(section_Time)
                     section_Info[class_Section]['section_Loc'].append(section_Loc)
                 # If there is No New Time, But Loc -> It is Really an Extension of the Previous location
-                elif section_Loc not in ["NA", "", " "]:
+                elif section_Loc not in ["NA", "", " ", "A"]:
                     section_Info[class_Section]['section_Loc'][-1] += section_Loc
                 # if section_Grading != "NA", It doesnt matter as it is just always the same
                 
