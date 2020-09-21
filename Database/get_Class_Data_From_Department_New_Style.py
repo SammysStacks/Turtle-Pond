@@ -31,7 +31,7 @@ course_URLs = [\
 
 
     
-def write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Description):
+def write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Prereqs, class_Description):
     class_Code = re.sub(' +', ' ', class_Code) # Remove Double Spaces
     # Decompress Class Code for Each Class
     class_Code_Info = re.split('(\d+)', class_Code)
@@ -76,7 +76,7 @@ def write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Desc
                     data[class_Code]['class_Term'] = class_Term
                     data[class_Code]['class_Description'] = class_Description
                     # Some Info is Not Present Here
-                    data[class_Code]['class_Prereqs'] = "NA"
+                    data[class_Code]['class_Prereqs'] = class_Prereqs
                     data[class_Code]['course_Evaluation_Info'] = {
                         'first': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
                         'second': {'class_Hours': "NA", 'class_Rating': "NA", 'course_Eval_URL': "NA"},
@@ -85,14 +85,17 @@ def write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Desc
                 
                 # Write Info to JSON Database for Updated Input
                 # If Units Not Present
-                if data[class_Code]['class_Units'] in ["+", "NA", "", " "]:
+                if data[class_Code]['class_Units'] in ["+", "NA", "", " ", "."]:
                     data[class_Code]['class_Units'] = re.sub(' +', ' ', class_Units) # Single Spaces Only
                 # If Full Name Present
                 if len(data[class_Code]['class_Name']) < len(re.sub(' +', ' ', class_Name)):
                     data[class_Code]['class_Name'] = re.sub(' +', ' ', class_Name)   # Single Spaces Only
                 # If NA
-                if data[class_Code]['class_Term'] in ["NA", "", " "]:
+                if data[class_Code]['class_Term'] in ["NA", "", " ", "."]:
                     data[class_Code]['class_Term'] = class_Term
+                # If Prereqs Not Present
+                if data[class_Code]['class_Prereqs'] in ["+", "NA", "", " ", ".", "Prerequisites: NA"]:
+                    data[class_Code]['class_Prereqs'] = re.sub(' +', ' ', class_Prereqs) # Single Spaces Only
                 # Add Another Term
                 if class_Term != "NA":
                     for term in class_Term.split(", "):
@@ -138,7 +141,11 @@ with open('registars_Data.json') as JSON_File:
                     class_Units = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__units')]")[0].text.replace(":", "")
                     class_Term_to_Edit = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__terms')]")[0].text.replace(" term.","").replace(" terms.","")
                     class_Description = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__description')]")[0].text
-                    class_Instructors = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__instructors')]")[0].texts
+                    class_Instructors = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__instructors')]")[0].text
+                    try:
+                        class_Prereqs = current_Class.find_elements_by_xpath(".//span[contains(@class,'course-description__prerequisites')]")[0].text
+                    except:
+                        class_Prereqs = "Prerequisites: NA"
                     
                     # Add Instructor to Description
                     if class_Instructors in ["NA", " ", ".", " ."]:
@@ -179,7 +186,7 @@ with open('registars_Data.json') as JSON_File:
                     #print("code: ", class_Code, " name: ", class_Name, " units: ", class_Units, " term: ", class_Term)
                     #print("")
                     
-                    data = write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Description)
+                    data = write_Data(data, class_Code, class_Name, class_Units, class_Term, class_Prereqs, class_Description)
                     
             print("Closing")
             driver.close()

@@ -146,8 +146,8 @@ function add_Description(class_Code, class_Term, class_Units, class_Name, prereq
   describe_Class += '<span class="class_Name_Text">' + class_Name + '</span>'
   describe_Class += "<button id='add_Button_Click' class='add_Button btn btn-outline-danger mb-1')>Add Class</button>"
   describe_Class += '<div class="small_Description_Text">'
-  //describe_Class += '<p class="prereq_Text">'+prereqs+'</p>'
   if (course_Eval_URL != "NA") {describe_Class += "<p><a href='"+course_Eval_URL+"' target='_blank'>Course Evaluation</a> "+"{Time Spent Outside of Class: "+class_Hours+" Hours; Overall Rating: "+class_Rating+'}</p>'}
+  if (prereqs != "Prerequisites: NA") {describe_Class += '<p class="prereq_Text">'+prereqs+'</p>'}
   describe_Class += '<p>'+"Units: "+class_Units+"; Term: "+class_Term+";  Grading: "+grading_Scheme+'</p>'
   describe_Class += '</div>'
   if (section_Info != {} || Object.keys(section_Info).length > 1) {describe_Class += '<div id="display_Sections"><button class="link_button" id="section_Button"></button></div>'}
@@ -623,7 +623,7 @@ function find_Classes() {
           let class_Rating = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['class_Rating']
           let course_Eval_URL = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['course_Eval_URL']
           // Place Holders for Variables
-          if (prereqs === "NA" || prereqs === "" || prereqs === " ") {prereqs = "Prerequisites: NA";}
+          if (prereqs === "NA" || prereqs === "" || prereqs === " " || prereqs === ".") {prereqs = "Prerequisites: NA";}
           if (class_Term === undefined || class_Term === "" || class_Term === " ") {class_Term = "NA";}
           if (text_description === "NA" || text_description === "" || text_description === " ") {text_description = "Description: NA";}
           if (class_Hours === undefined || class_Hours === "" || class_Hours === " ") {class_Hours = "NA";}

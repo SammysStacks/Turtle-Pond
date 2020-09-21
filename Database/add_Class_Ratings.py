@@ -24,13 +24,13 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-# Must be in Order of Important
+# Must Match the Write_Data Term 'URL_Term' Order
 course_URLs = [\
-# Spring (First priority)
+# Spring
 "https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", \
 # Winter
 "https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", \
-# Fall (Last Priority)
+# Fall
 "https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", \
 ]
 
