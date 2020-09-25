@@ -706,9 +706,9 @@ function load_TermState() {
   let previous_Class_Units = term_PageState.class_Units;
   let previous_Calendar_State = term_PageState.calendar_State;
   // Add Previous State to HTML Elements
-  current_Class_List.innerHTML = previous_Class_List //current_Class_List.parentNode.replaceChild(previous_Class_List, current_Class_List);
+  current_Class_List.innerHTML = previous_Class_List
   current_Class_Units.innerHTML = previous_Class_Units;
-  current_Calendar_State.innerHTML = previous_Calendar_State //parentNode.replaceChild(previous_Calendar_State, current_Calendar_State);
+  current_Calendar_State.innerHTML = previous_Calendar_State
   // Get Onclick Events backgroundColor
   var calendar_Events = document.querySelectorAll("#calendar_Body button");
   var calendar_Events_List = document.querySelectorAll("#display_Added_Classes button");
