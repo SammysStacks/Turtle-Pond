@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov  9 20:55:40 2020
+
+@author: samuelsolomon
+"""
+
+# General Modules
+import sys
+# Split the Code Name
+import re
+# Write to JSON Database
+import json
+# Navigate Webpages
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
+
+URL = "https://access.caltech.edu/tqfr/reports/show_report?survey_id=36&term_id=518&division_id=80425&department_id=214&offering_id=77614&track_id=77614-Default"
+
+driver = webdriver.Chrome(executable_path='./chromedriver')
+driver.get(URL)
+# Login
+login_Form = driver.find_elements_by_xpath("//body//div[contains(@id,'container')]//div[contains(@id,'contents')]//section[contains(@id,'main')]//form[contains(@id, 'login_form')]")[0]
+login_Form.find_elements_by_xpath("//input[contains(@name,'login')]")[0].send_keys("ssolomon")
+login_Form.find_elements_by_xpath("//input[contains(@name,'password')]")[0].send_keys("SAMthegreat11!!")
+login = login_Form.find_elements_by_xpath("//input[contains(@type,'submit')]")[0]
+driver.execute_script("arguments[0].click();", login)
+
+rating_Header = driver.find_element_by_xpath(".//td[contains(text(),'±')]")
+rating_Row = rating_Header
+print(rating_Row.text)
+rating = rating_Row.text.split(" ± ")
+print(rating)

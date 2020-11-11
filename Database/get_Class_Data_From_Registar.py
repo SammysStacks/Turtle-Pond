@@ -26,7 +26,7 @@ from webdriver_manager.chrome import ChromeDriverManager
     
 course_URLs = [\
 "http://schedules.caltech.edu/FA2020-21.html",\
-"http://schedules.caltech.edu/WI2019-20.html", \
+"http://schedules.caltech.edu/WI2020-21.html", \
 "http://schedules.caltech.edu/SP2019-20.html", \
 ]
 

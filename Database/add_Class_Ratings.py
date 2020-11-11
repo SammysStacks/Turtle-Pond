@@ -9,7 +9,9 @@ Need to install the following via command line:
     pip install webdriver-manager
     python -m pip install -U selenium
     
-Time to run: ~1.5 Hours
+Time to run: ~0.5 Hours per link
+
+Works Best in Chrome (in Dock for Macs, not pop up)
 """
 
 # General Modules
@@ -25,25 +27,33 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 
 # Must Match the Write_Data Term 'URL_Term' Order
+# Most Recent Ones Should be Near Top
 course_URLs = [\
 # Spring
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", \
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", # 2020
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=36&term_id=518", # 2019
 # Winter
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", \
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", # 2020
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=35&term_id=517", # 2019
 # Fall
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", \
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", # 2019
+"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=34&term_id=516", # 2018
 ]
-
-
     
+badLinks = []
+
+
+
 def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, URL_Term):
     # Get Class Term
-    if URL_Term == 2:
+    if URL_Term in [4, 5]:
         link_Term = "first"
-    elif URL_Term == 1:
+    elif URL_Term in [2, 3]:
         link_Term = "second"
-    elif URL_Term == 0:
+    elif URL_Term in [0, 1]:
         link_Term = "third"
+    else:
+        print("WTF: what is my URL_Term: ", URL_Term)
         
     
     class_Code = re.sub(' +', ' ', class_Code) # Remove Double Spaces
@@ -79,7 +89,7 @@ def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, URL_Term
             for class_Num in class_Nums:
                 class_Code = class_Dept + " " + class_Num + class_Level
                 print("code:", class_Code)
-                # See if Class Already in Dictionary
+                # See if Class Already in Dictionary (Dont add New Class Just for a Rating; Maybe it is Not Offered)
                 previous_Input = data.get(class_Code, None)
                 if previous_Input == None:
                      continue
@@ -180,8 +190,8 @@ with open('department_Data_Current.json') as JSON_File:
                             print("No Class Hours")
                             course_Hours = "NA"
                         
-                        # Get Course Overall Rating                        
-                        rating_Header = driver.find_element_by_xpath(".//td[contains(text(),' ± ')]")
+                        # Get Course Overall Rating
+                        rating_Header = driver.find_element_by_xpath(".//td[contains(text(),'±')]")
                         rating_Row = rating_Header
                         rating = rating_Row.text.split(" ± ")
                         if len(rating) > 1:
@@ -204,8 +214,11 @@ with open('department_Data_Current.json') as JSON_File:
             driver.close()
         except Exception as e:
             print(e)
+            badLinks.append((URL_Term, URL, e))
             driver.close()
             print("\n\nError Getting Data From: ", URL)
+
+print(badLinks)
             
 with open('courses_And_Ratings.json', 'w') as outfile:
     json.dump(data, outfile, indent=4, sort_keys=True)

@@ -601,7 +601,7 @@ function find_Classes() {
   class_Table_Body = document.getElementById("class_Data")
   class_Table_Body.querySelectorAll('*').forEach(n => n.remove());
   $.ajax({
-    url: "Database/courses_And_Ratings.json",
+    url: "Database/courses_culled.json",
     beforeSend: function(xhr){
     if (xhr.overrideMimeType) {xhr.overrideMimeType("application/json");}},
     dataType: 'json',
@@ -610,9 +610,12 @@ function find_Classes() {
     for (var key in data) {
         // this will check if key is owned by data object and not by any of it's ancestors
         if (data.hasOwnProperty(key)) {
+          // Only Place in Table if in Correct Term
+          let class_Term = data[key]['class_Term']                // Class Term: First Term
+          if (class_Term === undefined || class_Term === "" || class_Term === " ") {class_Term = "NA";}
+          if (class_Term.toUpperCase().includes(window.filter_Class_Term.toUpperCase()) === false && class_Term != "NA") {continue;}
           // Get Class Data From Row
           let class_Code = data[key]['class_Code']                // Class Code: CS 1
-          let class_Term = data[key]['class_Term']                // Class Term: First Term
           let class_Units = data[key]['class_Units']              // Class Name: Introduction to Computer Programming
           let class_Name = data[key]['class_Name']                // Class Name: Introduction to Computer Programming
           let prereqs = data[key]['class_Prereqs']                // Example: Prerequisites: CS 1 or equivalent
@@ -624,13 +627,10 @@ function find_Classes() {
           let course_Eval_URL = class_Evaluation_Holder[String(window.filter_Class_Term).toLowerCase()]['course_Eval_URL']
           // Place Holders for Variables
           if (prereqs === "NA" || prereqs === "" || prereqs === " " || prereqs === ".") {prereqs = "Prerequisites: NA";}
-          if (class_Term === undefined || class_Term === "" || class_Term === " ") {class_Term = "NA";}
           if (text_description === "NA" || text_description === "" || text_description === " ") {text_description = "Description: NA";}
           if (class_Hours === undefined || class_Hours === "" || class_Hours === " ") {class_Hours = "NA";}
           if (class_Rating === undefined || class_Rating === "" || class_Rating === " ") {class_Rating = "NA";}
           if (course_Eval_URL === undefined || course_Eval_URL === "" || course_Eval_URL === " ") {course_Eval_URL = "NA";}
-          // Only Place in Table if in Correct Term
-          if (class_Term.toUpperCase().includes(window.filter_Class_Term.toUpperCase()) === false && class_Term != "NA") {continue;}
           // Find the Total Class Units (if Given).
           if (class_Units === "+" || class_Units === "" || class_Units === " ") {class_Total_Units = "NA";}
           else {class_Total_Units = class_Units.split("-").reduce(function(a, b) {return parseFloat(a) + parseFloat(b);}, 0);}
@@ -742,7 +742,10 @@ $(document).ready(function(){
   // Check if Previous State is Availilbe
   window.pageState = JSON.parse(localStorage.getItem('pageState'));
   // Change this number if you want to clear all stored cookies/cache after a major change to the database
-  let refresh_Update_Number = 2
+  let refresh_Update_Number = 2;
+  let refresh_First_Term = 2;
+  let refresh_Second_Term = 3;
+  let refresh_Third_Term = 2;
   if (window.pageState === null || window.pageState.Updated != refresh_Update_Number) {
     let current_Class_List = document.getElementById("display_Added_Classes");
     let current_Calendar_State = document.getElementById("calendar_Body");
@@ -761,14 +764,47 @@ $(document).ready(function(){
         class_List: current_Class_List.innerHTML,
         class_Units: current_Class_Units.innerHTML,
         calendar_State: current_Calendar_State.innerHTML},
-      Updated: refresh_Update_Number
+      Updated: refresh_Update_Number,
+      refresh_Update_First: refresh_First_Term,
+      refresh_Update_Second: refresh_Second_Term,
+      refresh_Update_Third: refresh_Third_Term
     };
     savePageState();}
-  else {
-    // Retrieve Previous State
-    console.log("Found Previous Page State")
-    load_TermState()
+  if (window.pageState.refresh_Update_First != refresh_First_Term) {
+    let current_Class_List = document.getElementById("display_Added_Classes");
+    let current_Calendar_State = document.getElementById("calendar_Body");
+    let current_Class_Units = document.getElementById("cumulative_Class_Info");
+    // Update Only the First Term
+    window.pageState.First = {
+        class_List: current_Class_List.innerHTML,
+        class_Units: current_Class_Units.innerHTML,
+        calendar_State: current_Calendar_State.innerHTML};
+    window.pageState.refresh_Update_First = refresh_First_Term;
   }
+  if (window.pageState.refresh_Update_Second != refresh_Second_Term) {
+    let current_Class_List = document.getElementById("display_Added_Classes");
+    let current_Calendar_State = document.getElementById("calendar_Body");
+    let current_Class_Units = document.getElementById("cumulative_Class_Info");
+    // Update Only the Second Term
+    window.pageState.Second = {
+        class_List: current_Class_List.innerHTML,
+        class_Units: current_Class_Units.innerHTML,
+        calendar_State: current_Calendar_State.innerHTML};
+    window.pageState.refresh_Update_Second = refresh_Second_Term;
+  }
+  if (window.pageState.refresh_Update_Third != refresh_Third_Term) {
+    let current_Class_List = document.getElementById("display_Added_Classes");
+    let current_Calendar_State = document.getElementById("calendar_Body");
+    let current_Class_Units = document.getElementById("cumulative_Class_Info");
+    // Update Only the Third Term
+    window.pageState.Third = {
+        class_List: current_Class_List.innerHTML,
+        class_Units: current_Class_Units.innerHTML,
+        calendar_State: current_Calendar_State.innerHTML};
+    window.pageState.refresh_Update_Third = refresh_Third_Term;
+  }
+  // Load Current State
+  load_TermState()
   // Display Classes and Units
   display_Units()  // Display Units if > 0
   find_Classes() // Display Class Table

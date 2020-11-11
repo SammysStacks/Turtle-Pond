@@ -26,6 +26,7 @@
   <title> Caltech Calendar </title>
   <link rel="stylesheet" href="CSS/main_Layout.css?v=4"/>
   <script src="JavaScript/pull_Class_Info.js?v=2"></script>
+  <script src="JavaScript/check_Degree.js?v=2"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -55,13 +56,24 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <!-- Nav Bar Header That is Dispalyed -->
-    <div class="container nav_Container">
+    <div class="nav_Container container">
         <span class="navbar-brand"> Caltech Calendar </span>
         <div class="collapse navbar-collapse text-white">
           <ul class = "navbar-nav ml-auto pull-right">
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('First')"> Fall Term (2020) </button></li>
-            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Second')"> Winter Term (2020)</button></li>
+            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Second')"> Winter Term (2021)</button></li>
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Third')"> Spring Term (2020) </button></li>
+            <!-- Degree Check (Can Add Later)
+            <li class = "nav-item mx-0 mx-lg-1">
+              <div class="dropdown">
+               <button class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link">Degree Check</button>
+               <div class="dropdown-content">
+                 <button class="btn btn-link" onclick="check_Degree('MedE')">MedE</button>
+                 <button class="btn btn-link" onclick="check_Degree('Ch')">Ch</button>
+               </div>
+              </div>
+            </li>
+          -->
           </ul>
         </div>
     </div>
