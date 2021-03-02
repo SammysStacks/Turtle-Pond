@@ -6,6 +6,9 @@
   <meta name="description" content="Caltech Course Picking Guide for Students">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta charset="UTF-8" />
+  <meta http-equiv=“Pragma” content=”no-cache”>
+  <meta http-equiv=“Expires” content=”-1″>
+  <meta http-equiv=“CACHE-CONTROL” content=”NO-CACHE”>
 
   <!-- JQuery -->
   <script src="JavaScript/jquery-1.9.1.min.js" type="text/javascript"></script>
@@ -24,9 +27,9 @@
 
   <!-- Title and My Additions -->
   <title> Caltech Calendar </title>
-  <link rel="stylesheet" href="CSS/main_Layout.css?v=4"/>
-  <script src="JavaScript/pull_Class_Info.js?v=2"></script>
-  <script src="JavaScript/check_Degree.js?v=2"></script>
+  <link rel="stylesheet" href="CSS/main_Layout.css?v=1.2"/>
+  <script src="JavaScript/pull_Class_Info.js?v=3.3"></script>
+  <!-- <script src="JavaScript/check_Degree.js?v=3"></script> -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
@@ -62,7 +65,7 @@
           <ul class = "navbar-nav ml-auto pull-right">
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('First')"> Fall Term (2020) </button></li>
             <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Second')"> Winter Term (2021)</button></li>
-            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Third')"> Spring Term (2020) </button></li>
+            <li class = "nav-item mx-0 mx-lg-1"><button class = "nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger btn btn-link" onclick="change_Term('Third')"> Spring Term (2021) </button></li>
             <!-- Degree Check (Can Add Later)
             <li class = "nav-item mx-0 mx-lg-1">
               <div class="dropdown">
@@ -180,7 +183,7 @@
     <div>
       <span>
         <span class="header_Text">Class Name: </span>
-        <input id="class_Database" class = "input_place" onkeyup="search_Database()" type = "text" placeholder = "Find  classes | CS 1, EE 116, etc"/>
+        <input id="class_Database" class = "input_place" onkeyup="search_Database()" type = "text" placeholder = "Find  classes | CS 1, Fluid Mechanics etc"/>
       </span>
     </div>
     <!-- Add Your own Activity -->
