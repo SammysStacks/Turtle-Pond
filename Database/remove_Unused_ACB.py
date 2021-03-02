@@ -12,10 +12,6 @@ Need to install the following via command line:
 Time to run: ~4.5 Hours
 """
 
-# General Modules
-import sys
-# Split the Code Name
-import re
 # Write to JSON Database
 import json
 

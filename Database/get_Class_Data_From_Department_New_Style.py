@@ -12,16 +12,13 @@ Need to install the following via command line:
 Program takes around 5 minutes to run
 """
 
-# General Modules
-import sys
+
 # Split the Code Name
 import re
 # Write to JSON Database
 import json
 # Navigate Webpages
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
   
 
 course_URLs = [\

@@ -12,22 +12,18 @@ Need to install the following via command line:
 Takes around 45 minutes (+/- 15 per page)
 """
 
-# General Modules
 import sys
 # Split the Code Name
 import re
 # Write to JSON Database
 import json
 # Navigate Webpages
-import selenium
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
     
 course_URLs = [\
 "http://schedules.caltech.edu/FA2020-21.html",\
 "http://schedules.caltech.edu/WI2020-21.html", \
-"http://schedules.caltech.edu/SP2019-20.html", \
+"http://schedules.caltech.edu/SP2020-21.html",   
 ]
 
 
@@ -113,6 +109,9 @@ data = {}
 # Get Data From Registar Website
 for URL in course_URLs:
     try:
+        
+        # ----------- Open Selenium Driver and Compile Data Tags ----------- #
+        
         # Open a Chrome Browser (in Terminal) to Run Code
         print("Getting Class Info for: ", URL)
         driver = webdriver.Chrome(executable_path='./chromedriver')
@@ -120,12 +119,56 @@ for URL in course_URLs:
         # Get Course HTML Elements
         course_Body_List = driver.find_elements_by_xpath("//table//tbody//tr//td[contains(@rowspan,'2')][contains(@width,'132')]//font[contains(@face,'verdana')]//parent::td//parent::tr")
         course_Header_List = driver.find_elements_by_xpath("//table//tbody//tr[contains(@valign,'top')]//td[contains(@width,'113')]//a[contains(@target,'_parent')]//font[contains(@face,'verdana')]//parent::a//parent::td//parent::tr")
-        header_Hash = 0
-        add_First = False
+        cancelledClasses = driver.find_elements_by_xpath("//table//tbody//tr//td[contains(@width,'524')]//font[contains(@face,'verdana')]//i[contains(text(), 'cancelled')][not(contains(text(),'ection'))]")
+        totalSections = len(course_Body_List)
+        header_Hash = 1
+        cancelledHash = 0
+        
+        # ---------------------------------------------------------------#
 
         # Loop Through Every Class Section in Every Course
         section_Info = {}
-        for section in course_Body_List:
+        for sectionNum, section in enumerate(course_Body_List):
+            
+            # ------------ Compile Section Header and Write Data ----------- #
+            
+            # If we are Moving onto Next Header
+            if section.location['y'] > course_Header_List[header_Hash].location['y'] or sectionNum == totalSections:
+                # Get the Class Header Information
+                course_Header = course_Header_List[header_Hash-1].find_elements_by_tag_name('td')
+                # From the Header Information, Extract the Class Code/Units/Name
+                class_Code = "NA"; class_Units = "NA"; class_Name = "NA";
+                for course in course_Header:
+                    element_Width= course.get_attribute('width')
+                    if element_Width == "113":
+                        class_Code_RAW = course.text
+                        class_Code = " ".join(re.split(r'(^[^\d]+)', class_Code_RAW)[1:]) # Add Space Before Class #
+                    elif element_Width == "80":
+                        class_Units = course.text
+                    elif element_Width == "524":
+                        class_Name = course.text
+                
+                # Write Previus Section
+                #print(class_Code, class_Units, class_Name, section_Info)
+                #print("\n")
+                # Write Data; Skip Classes that are Canceled (Should be 18 apart, dont go over 70)
+                if cancelledHash >= len(cancelledClasses) or cancelledClasses[cancelledHash].location['y'] - course_Header_List[header_Hash-1].location['y'] > 18*3:
+                    data = write_Data(data, class_Code, class_Units, class_Name, section_Info, URL)
+                # If We Messed Up and Missed Something
+                elif cancelledClasses[cancelledHash].location['y'] - course_Header_List[header_Hash-1].location['y'] < 0:
+                    print("WE MESSED UP", cancelledHash, header_Hash)
+                    print(course_Header_List[header_Hash-1].text)
+                    sys.exit()
+                else:
+                    cancelledHash += 1
+                # Prepare for next Course
+                section_Info = {}
+                header_Hash += 1
+                        
+            # ---------------------------------------------------------------#
+                
+            # -------------- Get Section Info for Each Section ------------- #
+            
             # Initialize New Variables for Course
             new_Course = True
             previous_Section = class_Section
@@ -146,6 +189,10 @@ for URL in course_URLs:
                     section_Loc = course.text
                 elif element_Width == "132":
                     section_Grading = course.text
+            
+            # ---------------------------------------------------------------#
+            
+            # ----------- Compile Section Info under One Format ------------ #
                     
             # If Class Section is Missing, then Data Belongs to Previous Section
             if class_Section in ["NA", "", " "]:
@@ -156,50 +203,33 @@ for URL in course_URLs:
                 if section_Instructor not in ["NA", "", " "]:
                     section_Info[class_Section]['section_Instructor'] += section_Instructor
                 # If there is a New Time, It is New Information
-                elif section_Time not in ["NA", "", " ", "A"]:
-                    section_Info[class_Section]['section_Time'].append(section_Time)
-                    section_Info[class_Section]['section_Loc'].append(section_Loc)
+                if section_Time not in ["NA", "", " ", "A"]:
+                    if section_Info[class_Section]['section_Time'][-1].endswith(" - "):
+                        section_Info[class_Section]['section_Time'][-1] += section_Time
+                    else:
+                        section_Info[class_Section]['section_Time'].append(section_Time)
+                    # If the New Location is Useful
+                    if section_Loc not in ["NA", "", " ", "A"]:
+                        # If the Old Location Wasnt Useful
+                        if section_Info[class_Section]['section_Loc'] not in ["NA", "", " ", "A"]:
+                            section_Info[class_Section]['section_Loc'] = section_Loc
+                        # If New Location, Add it as List
+                        else:
+                            section_Info[class_Section]['section_Loc'].append(section_Loc)
                 # If there is No New Time, But Loc -> It is Really an Extension of the Previous location
                 elif section_Loc not in ["NA", "", " ", "A"]:
                     section_Info[class_Section]['section_Loc'][-1] += section_Loc
                 # if section_Grading != "NA", It doesnt matter as it is just always the same
-                
-            # If First in Section (NOTE: I have seen mess ups with labeling the first '011'. ugh)
-            # Also Some Sections are MISSING! So NOT ALL Start with 01
-            if new_Course and (class_Section.startswith("01") or (int(class_Section) <= int(previous_Section))):
-                # Write Previus Section
-                if add_First:
-                    header_Hash += 1
-                    data = write_Data(data, class_Code, class_Units, class_Name, section_Info, URL)
-                    # Prepare for next Course
-                    section_Info = {}
-                else:
-                    add_First = True
-                # Get the Class Header Information
-                course_Header = course_Header_List[header_Hash].find_elements_by_tag_name('td')
-                #print(course_Header_List[header_Hash].text)
-                class_Code = "NA"; class_Units = "NA"; class_Name = "NA";
-                for course in course_Header:
-                    element_Width= course.get_attribute('width')
-                    if element_Width == "113":
-                        class_Code_RAW = course.text
-                        class_Code = " ".join(re.split(r'(^[^\d]+)', class_Code_RAW)[1:]) # Add Space Before Class #
-                    elif element_Width == "80":
-                        class_Units = course.text
-                    elif element_Width == "524":
-                        class_Name = course.text
-                    
-            # Compile Section Data
-            if new_Course:
+            # It is a New Course, so Compile Section Data
+            else:
                 section_Info[class_Section] = {}
                 section_Info[class_Section]['section_Instructor'] = section_Instructor
                 section_Info[class_Section]['section_Time'] = [section_Time]
                 section_Info[class_Section]['section_Loc'] = [section_Loc]
-                section_Info[class_Section]['section_Grading'] = section_Grading  
-            #print(section.text)
-        
-        header_Hash += 1
-        data = write_Data(data, class_Code, class_Units, class_Name, section_Info, URL)
+                section_Info[class_Section]['section_Grading'] = section_Grading 
+            
+            # ---------------------------------------------------------------#
+                        
         driver.close()
     except Exception as e:
         driver.close()

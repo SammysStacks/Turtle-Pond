@@ -9,52 +9,40 @@ Need to install the following via command line:
     pip install webdriver-manager
     python -m pip install -U selenium
     
-Time to run: ~0.5 Hours per link
+Time to run: ~0.5 Hours per link For Slow Internet
+Time to run: ~10 Minutes per link For Fast Internet (Page Navigation is Slowest Step)
 
 Works Best in Chrome (in Dock for Macs, not pop up)
 """
 
-# General Modules
-import sys
 # Split the Code Name
 import re
 # Write to JSON Database
 import json
 # Navigate Webpages
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 
 
-# Must Match the Write_Data Term 'URL_Term' Order
 # Most Recent Ones Should be Near Top
 course_URLs = [\
 # Spring
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", # 2020
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=36&term_id=518", # 2019
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", "third"), # 2020
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=36&term_id=518", "third"),  # 2019
 # Winter
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", # 2020
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=35&term_id=517", # 2019
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", "second"), # 2020
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=35&term_id=517", "second"), # 2019
+#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=31&term_id=513", "second"), # 2018
 # Fall
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", # 2019
-"https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=34&term_id=516", # 2018
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=41&term_id=526", "first"), # 2020
+#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", "first"), # 2019
+#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=34&term_id=516", "first"), # 2018
 ]
     
 badLinks = []
 
 
 
-def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, URL_Term):
-    # Get Class Term
-    if URL_Term in [4, 5]:
-        link_Term = "first"
-    elif URL_Term in [2, 3]:
-        link_Term = "second"
-    elif URL_Term in [0, 1]:
-        link_Term = "third"
-    else:
-        print("WTF: what is my URL_Term: ", URL_Term)
-        
+def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, link_Term):      
     
     class_Code = re.sub(' +', ' ', class_Code) # Remove Double Spaces
     # Decompress Class Code for Each Class
@@ -88,7 +76,7 @@ def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, URL_Term
                 class_Level = class_Level
             for class_Num in class_Nums:
                 class_Code = class_Dept + " " + class_Num + class_Level
-                print("code:", class_Code)
+                #print("code:", class_Code)
                 # See if Class Already in Dictionary (Dont add New Class Just for a Rating; Maybe it is Not Offered)
                 previous_Input = data.get(class_Code, None)
                 if previous_Input == None:
@@ -114,7 +102,9 @@ def write_Data(data, class_Code, course_Hours, rating, course_Eval_URL, URL_Term
 with open('department_Data_Current.json') as JSON_File:
     data = json.load(JSON_File)
         
-    for URL_Term, URL in enumerate(course_URLs):
+    for URL_Term_Term in course_URLs:
+        URL = URL_Term_Term[0]
+        Link_Term = URL_Term_Term[1]
         try:
             print("Getting Class Info for: ", URL)
             # Open a Chrome Browser (in Terminal) to Run Code
@@ -122,8 +112,8 @@ with open('department_Data_Current.json') as JSON_File:
             driver.get(URL)
             # Login
             login_Form = driver.find_elements_by_xpath("//body//div[contains(@id,'container')]//div[contains(@id,'contents')]//section[contains(@id,'main')]//form[contains(@id, 'login_form')]")[0]
-            login_Form.find_elements_by_xpath("//input[contains(@name,'login')]")[0].send_keys("")
-            login_Form.find_elements_by_xpath("//input[contains(@name,'password')]")[0].send_keys("")
+            login_Form.find_elements_by_xpath("//input[contains(@name,'login')]")[0].send_keys("ssolomon")
+            login_Form.find_elements_by_xpath("//input[contains(@name,'password')]")[0].send_keys("SAMthegreat11!!")
             login = login_Form.find_elements_by_xpath("//input[contains(@type,'submit')]")[0]
             driver.execute_script("arguments[0].click();", login)
             # Get Table Information with Class Catagories
@@ -145,7 +135,7 @@ with open('department_Data_Current.json') as JSON_File:
                 for j in range(len(course_Departments)):
                     course_Departments = driver.find_elements_by_xpath("//table[contains(@class,'tablediv')]//tbody//tr//td[contains(@class,'questiondiv')]//a")
                     course_Department = course_Departments[j]
-                    print("Department:", course_Department.text)
+                    #print("Department:", course_Department.text)
                     # Find Classes in Departmnet
                     driver.execute_script("arguments[0].click();", course_Department)
                     current_Courses = driver.find_elements_by_xpath("//table[contains(@class,'tablediv')]//tbody//tr")
@@ -159,10 +149,10 @@ with open('department_Data_Current.json') as JSON_File:
                         course_Score = current_Course.text.split(" ± ")
                         if len(course_Score) > 1:
                             course_Score = course_Score[0].split(" ")[-1] + " ± " + course_Score[1]
-                            print("Score:", course_Score)
+                            #print("Score:", course_Score)
                         else:
-                            print("No Score", current_Course.text)
-                            print("")
+                            #print("No Score", current_Course.text)
+                            #print("")
                             continue
                         
                         # Move into Course Survey Page
@@ -187,7 +177,7 @@ with open('department_Data_Current.json') as JSON_File:
                             course_Hours = course_Hours_Table.find_elements_by_xpath(".//tr[contains(@class,'header')]//th")[columns_In].text                            
                         except Exception as e:
                             print(e)
-                            print("No Class Hours")
+                            #print("No Class Hours")
                             course_Hours = "NA"
                         
                         # Get Course Overall Rating
@@ -196,17 +186,17 @@ with open('department_Data_Current.json') as JSON_File:
                         rating = rating_Row.text.split(" ± ")
                         if len(rating) > 1:
                             rating = rating[0] + " ± " + rating[1].split(" ")[-1]
-                            print("Rating", rating)
+                            #print("Rating", rating)
                         else:
-                            print("No Score in Class Page ... WHY?")
+                            #print("No Score in Class Page ... WHY?")
                             rating = "NA"
                             
                         # Write Data
-                        data = write_Data(data, course_Code, course_Hours, rating, course_Eval_URL, URL_Term)
+                        data = write_Data(data, course_Code, course_Hours, rating, course_Eval_URL, Link_Term)
                         
                         # Return Back to Previous Page
                         driver.back()
-                        print("")
+                        #print("")
 
                     driver.back()
                 driver.back()
@@ -214,7 +204,7 @@ with open('department_Data_Current.json') as JSON_File:
             driver.close()
         except Exception as e:
             print(e)
-            badLinks.append((URL_Term, URL, e))
+            badLinks.append((Link_Term, URL, e))
             driver.close()
             print("\n\nError Getting Data From: ", URL)
 
