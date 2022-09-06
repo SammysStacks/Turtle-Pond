@@ -9,21 +9,22 @@ Need to install the following via command line:
     pip install webdriver-manager
     python -m pip install -U selenium
     
-Takes around 45 minutes (+/- 15 per page)
+Takes around 30 minutes (+/- 10 per page), Internet Speed Dependant
 """
 
-import sys
-# Split the Code Name
-import re
+# Basic Modules
+import re         # Split Strings
+import sys        # System
+import linecache  # Error Printing
 # Write to JSON Database
 import json
 # Navigate Webpages
 from selenium import webdriver
     
 course_URLs = [\
-"http://schedules.caltech.edu/FA2020-21.html",\
-"http://schedules.caltech.edu/WI2020-21.html", \
-"http://schedules.caltech.edu/SP2020-21.html",   
+"http://schedules.caltech.edu/FA2021-22.html", \
+"http://schedules.caltech.edu/WI2021-22.html", \
+"http://schedules.caltech.edu/SP2021-22.html",   
 ]
 
 
@@ -133,7 +134,7 @@ for URL in course_URLs:
             # ------------ Compile Section Header and Write Data ----------- #
             
             # If we are Moving onto Next Header
-            if section.location['y'] > course_Header_List[header_Hash].location['y'] or sectionNum == totalSections:
+            if sectionNum == totalSections - 1 or section.location['y'] > course_Header_List[header_Hash].location['y']:
                 # Get the Class Header Information
                 course_Header = course_Header_List[header_Hash-1].find_elements_by_tag_name('td')
                 # From the Header Information, Extract the Class Code/Units/Name
@@ -179,16 +180,21 @@ for URL in course_URLs:
             course_Body = section.find_elements_by_tag_name('td')
             for course in course_Body:
                 element_Width = course.get_attribute('width')
+                # Reduce Options
+                itemText = course.text
+                if itemText in ["NA", "", " "]:
+                    itemText = "NA"
+                # Find the Correct Label
                 if element_Width == "42":
-                    class_Section = course.text
+                    class_Section = itemText
                 elif element_Width == "184":
-                    section_Instructor = course.text
+                    section_Instructor = itemText
                 elif element_Width == "135":
-                    section_Time = course.text
+                    section_Time = itemText
                 elif element_Width == "94":
-                    section_Loc = course.text
+                    section_Loc = itemText
                 elif element_Width == "132":
-                    section_Grading = course.text
+                    section_Grading = itemText
             
             # ---------------------------------------------------------------#
             
@@ -218,7 +224,7 @@ for URL in course_URLs:
                             section_Info[class_Section]['section_Loc'].append(section_Loc)
                 # If there is No New Time, But Loc -> It is Really an Extension of the Previous location
                 elif section_Loc not in ["NA", "", " ", "A"]:
-                    section_Info[class_Section]['section_Loc'][-1] += section_Loc
+                    section_Info[class_Section]['section_Loc'] += section_Loc
                 # if section_Grading != "NA", It doesnt matter as it is just always the same
             # It is a New Course, so Compile Section Data
             else:
@@ -232,9 +238,15 @@ for URL in course_URLs:
                         
         driver.close()
     except Exception as e:
-        driver.close()
-        print("\n\nError Getting Data From: ", URL)
+        exc_type, exc_obj, tb = sys.exc_info()
+        f = tb.tb_frame
+        lineno = tb.tb_lineno
+        filename = f.f_code.co_filename
+        linecache.checkcache(filename)
+        line = linecache.getline(filename, lineno, f.f_globals)
+        print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
         print(e)
+        sys.exit()
 
 print("Finished: ", len(data.keys()))
 with open('registars_Data.json', 'w') as outfile:

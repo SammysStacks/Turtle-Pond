@@ -26,16 +26,14 @@ from selenium import webdriver
 # Most Recent Ones Should be Near Top
 course_URLs = [\
 # Spring
-("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", "third"), # 2020
-("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=36&term_id=518", "third"),  # 2019
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=43&term_id=528", "third"),  # 2021
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=40&term_id=522", "third"),  # 2020
 # Winter
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=42&term_id=527", "second"), # 2021
 ("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=39&term_id=521", "second"), # 2020
-("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=35&term_id=517", "second"), # 2019
-#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=31&term_id=513", "second"), # 2018
 # Fall
-("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=41&term_id=526", "first"), # 2020
-#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=38&term_id=520", "first"), # 2019
-#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=34&term_id=516", "first"), # 2018
+("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=45&term_id=546", "first"),  # 2021
+#("https://access.caltech.edu/tqfr/reports/list_divisions?survey_id=41&term_id=526", "first"),  # 2020
 ]
     
 badLinks = []
