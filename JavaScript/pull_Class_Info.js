@@ -742,10 +742,10 @@ $(document).ready(function(){
   // Check if Previous State is Availilbe
   window.pageState = JSON.parse(localStorage.getItem('pageState'));
   // Change this number if you want to clear all stored cookies/cache after a major change to the database
-  let refresh_Update_Number = 2;
-  let refresh_First_Term = 3;
-  let refresh_Second_Term = 3;
-  let refresh_Third_Term = 6;
+  let refresh_Update_Number = 3;
+  let refresh_First_Term = 4;
+  let refresh_Second_Term = 4;
+  let refresh_Third_Term = 7;
   if (window.pageState === null || window.pageState.Updated != refresh_Update_Number) {
     let current_Class_List = document.getElementById("display_Added_Classes");
     let current_Calendar_State = document.getElementById("calendar_Body");
