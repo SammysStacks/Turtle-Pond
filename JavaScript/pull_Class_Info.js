@@ -744,7 +744,7 @@ $(document).ready(function(){
   // Change this number if you want to clear all stored cookies/cache after a major change to the database
   let refresh_Update_Number = 3;
   let refresh_First_Term = 4;
-  let refresh_Second_Term = 4;
+  let refresh_Second_Term = 5;
   let refresh_Third_Term = 7;
   if (window.pageState === null || window.pageState.Updated != refresh_Update_Number) {
     let current_Class_List = document.getElementById("display_Added_Classes");

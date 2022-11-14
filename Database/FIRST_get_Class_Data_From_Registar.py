@@ -7,7 +7,7 @@ Created on Mon Jun  1 16:15:48 2020
 Need to install the following via command line:
     pip install openpyxl webdriver-manager selenium
     
-Takes around 30 minutes (+/- 10 per page), Internet Speed Dependant
+Takes around 45 minutes (+/- 15 per page), Internet Speed Dependant
 """
 
 # Basic Modules
@@ -24,7 +24,7 @@ from webdriver_manager.chrome import ChromeDriverManager
     
 course_URLs = [\
 "http://schedules.caltech.edu/FA2022-23.html", \
-"http://schedules.caltech.edu/WI2021-22.html", \
+"http://schedules.caltech.edu/WI2022-23.html", \
 "http://schedules.caltech.edu/SP2021-22.html",   
 ]
 
